@@ -1,0 +1,176 @@
+/*@import '../../breakpoint';*/
+.modalOptions {
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /*
+  display: flex;
+  justify-content: center;
+  bottom: 0;
+  right: 0;
+  align-items: flex-start;*/
+  z-index: 100;
+}
+
+.modalContainer {
+  width: 80%;
+  min-width: 600px;
+  height: max-content;
+  border-radius: var(--border-radius);
+  background-color: var(--second-bg);
+  box-shadow: var(--box-shadow);
+  display: flex;
+  flex-direction: column;
+  padding: 25px;
+  position: relative;
+}
+
+/*
+@include mobile {
+    width: 100%;
+    margin: 0 20px;
+    height: fit-content;
+    min-height: 400px;
+}
+*/
+
+.modalContainer > h2 {
+  text-align: center;
+}
+
+.closeBtn {
+  position: absolute;
+  background-color: transparent;
+  border: none;
+  font-size: 25px;
+  top: 10px;
+  right: 20px;
+  cursor: pointer;
+}
+
+.modalBody {
+  flex: 70%;
+  display: flex;
+  justify-content: center;
+}
+
+.modalBody .active {
+  border: 3px solid var(--main-color);
+}
+
+.customRadio {
+}
+
+.customRadio .inputLabel {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px dotted var(--dark-bg);
+  border-radius: 20px;
+  width: 10rem;
+  height: 10rem;
+  cursor: pointer;
+  font-size: large;
+  /*
+        @include mobile {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        */
+}
+
+.changeLabel {
+  margin: 0 auto;
+  cursor: pointer;
+  font-size: large;
+}
+
+.imageContainer {
+  position: relative;
+  width: 18rem;
+  height: 11rem;
+  border-radius: 20px;
+  border: 1px dotted var(--dark-bg);
+  padding: 10px;
+}
+
+.imageContainer .image {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+
+.change {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+/*
+input {
+    display: none;
+}
+
+.active {
+    border: 3px solid var(--main-color) !important;
+}
+*/
+.modalFooter {
+  flex: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalFooterBtn1,
+.modalFooterBtn2 {
+  width: 150px !important;
+  height: 45px !important;
+  margin: 10px !important;
+  border: none !important;
+  color: white !important;
+  border-radius: 8px !important;
+  font-size: 20px !important;
+  cursor: pointer !important;
+}
+.desc {
+  align-self: center;
+  font-size: 18px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.modalFooterBtn1 {
+  background-color: var(--main-color) !important;
+  display: flex;
+  justify-content: center !important;
+  align-content: center !important;
+}
+
+.modalFooterBtn2 {
+  /* border: 1px solid #ccc;*/
+  color: var(--main-bg) !important;
+  background-color: var(--txt-color) !important;
+  display: flex;
+  justify-content: center !important;
+  align-content: center !important;
+}
+
+@media screen and (max-width: 480px) {
+  .modalContainer {
+    width: 100%;
+    min-width: 200px;
+  }
+  .small,
+  .desc {
+    font-size: 14px;
+  }
+  .modalFooterBtn1,
+  .modalFooterBtn2 {
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,22 @@
+[
+    {
+        "icon": "bx bx-shopping-bag",
+        "count": "1,995",
+        "title": "Total Events"
+    },
+    {
+        "icon": "bx bx-receipt",
+        "count": "300",
+        "title": "Active events"
+    },
+    {
+        "icon": "bx bx-chart",
+        "count": "632",
+        "title": "Verified Users"
+    },
+    {
+        "icon": "bx bx-user",
+        "count": "1,711",
+        "title": "Total Users"
+    }
+]

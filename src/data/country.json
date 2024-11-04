@@ -1,0 +1,1484 @@
+[
+    {
+     "country": "Afghanistan",
+     "2-code": "AF",
+     "3-code": "AFG",
+     "Un-code": 4
+    },
+    {
+     "country": "Aland Islands",
+     "2-code": "AX",
+     "3-code": "ALA",
+     "Un-code": 248
+    },
+    {
+     "country": "Albania",
+     "2-code": "AL",
+     "3-code": "ALB",
+     "Un-code": 8
+    },
+    {
+     "country": "Algeria",
+     "2-code": "DZ",
+     "3-code": "DZA",
+     "Un-code": 12
+    },
+    {
+     "country": "American Samoa",
+     "2-code": "AS",
+     "3-code": "ASM",
+     "Un-code": 16
+    },
+    {
+     "country": "Andorra",
+     "2-code": "AD",
+     "3-code": "AND",
+     "Un-code": 20
+    },
+    {
+     "country": "Angola",
+     "2-code": "AO",
+     "3-code": "AGO",
+     "Un-code": 24
+    },
+    {
+     "country": "Anguilla",
+     "2-code": "AI",
+     "3-code": "AIA",
+     "Un-code": 660
+    },
+    {
+     "country": "Antarctica",
+     "2-code": "AQ",
+     "3-code": "ATA",
+     "Un-code": 10
+    },
+    {
+     "country": "Antigua and Barbuda",
+     "2-code": "AG",
+     "3-code": "ATG",
+     "Un-code": 28
+    },
+    {
+     "country": "Argentina",
+     "2-code": "AR",
+     "3-code": "ARG",
+     "Un-code": 32
+    },
+    {
+     "country": "Armenia",
+     "2-code": "AM",
+     "3-code": "ARM",
+     "Un-code": 51
+    },
+    {
+     "country": "Aruba",
+     "2-code": "AW",
+     "3-code": "ABW",
+     "Un-code": 533
+    },
+    {
+     "country": "Australia",
+     "2-code": "AU",
+     "3-code": "AUS",
+     "Un-code": 36
+    },
+    {
+     "country": "Austria",
+     "2-code": "AT",
+     "3-code": "AUT",
+     "Un-code": 40
+    },
+    {
+     "country": "Azerbaijan",
+     "2-code": "AZ",
+     "3-code": "AZE",
+     "Un-code": 31
+    },
+    {
+     "country": "Bahamas",
+     "2-code": "BS",
+     "3-code": "BHS",
+     "Un-code": 44
+    },
+    {
+     "country": "Bahrain",
+     "2-code": "BH",
+     "3-code": "BHR",
+     "Un-code": 48
+    },
+    {
+     "country": "Bangladesh",
+     "2-code": "BD",
+     "3-code": "BGD",
+     "Un-code": 50
+    },
+    {
+     "country": "Barbados",
+     "2-code": "BB",
+     "3-code": "BRB",
+     "Un-code": 52
+    },
+    {
+     "country": "Belarus",
+     "2-code": "BY",
+     "3-code": "BLR",
+     "Un-code": 112
+    },
+    {
+     "country": "Belgium",
+     "2-code": "BE",
+     "3-code": "BEL",
+     "Un-code": 56
+    },
+    {
+     "country": "Belize",
+     "2-code": "BZ",
+     "3-code": "BLZ",
+     "Un-code": 84
+    },
+    {
+     "country": "Benin",
+     "2-code": "BJ",
+     "3-code": "BEN",
+     "Un-code": 204
+    },
+    {
+     "country": "Bermuda",
+     "2-code": "BM",
+     "3-code": "BMU",
+     "Un-code": 60
+    },
+    {
+     "country": "Bhutan",
+     "2-code": "BT",
+     "3-code": "BTN",
+     "Un-code": 64
+    },
+    {
+     "country": "Bolivia",
+     "2-code": "BO",
+     "3-code": "BOL",
+     "Un-code": 68
+    },
+    {
+     "country": "Bosnia and Herzegovina",
+     "2-code": "BA",
+     "3-code": "BIH",
+     "Un-code": 70
+    },
+    {
+     "country": "Botswana",
+     "2-code": "BW",
+     "3-code": "BWA",
+     "Un-code": 72
+    },
+    {
+     "country": "Bouvet Island",
+     "2-code": "BV",
+     "3-code": "BVT",
+     "Un-code": 74
+    },
+    {
+     "country": "Brazil",
+     "2-code": "BR",
+     "3-code": "BRA",
+     "Un-code": 76
+    },
+    {
+     "country": "British Virgin Islands",
+     "2-code": "VG",
+     "3-code": "VGB",
+     "Un-code": 92
+    },
+    {
+     "country": "British Indian Ocean Territory",
+     "2-code": "IO",
+     "3-code": "IOT",
+     "Un-code": 86
+    },
+    {
+     "country": "Brunei Darussalam",
+     "2-code": "BN",
+     "3-code": "BRN",
+     "Un-code": 96
+    },
+    {
+     "country": "Bulgaria",
+     "2-code": "BG",
+     "3-code": "BGR",
+     "Un-code": 100
+    },
+    {
+     "country": "Burkina Faso",
+     "2-code": "BF",
+     "3-code": "BFA",
+     "Un-code": 854
+    },
+    {
+     "country": "Burundi",
+     "2-code": "BI",
+     "3-code": "BDI",
+     "Un-code": 108
+    },
+    {
+     "country": "Cambodia",
+     "2-code": "KH",
+     "3-code": "KHM",
+     "Un-code": 116
+    },
+    {
+     "country": "Cameroon",
+     "2-code": "CM",
+     "3-code": "CMR",
+     "Un-code": 120
+    },
+    {
+     "country": "Canada",
+     "2-code": "CA",
+     "3-code": "CAN",
+     "Un-code": 124
+    },
+    {
+     "country": "Cape Verde",
+     "2-code": "CV",
+     "3-code": "CPV",
+     "Un-code": 132
+    },
+    {
+     "country": "Cayman Islands",
+     "2-code": "KY",
+     "3-code": "CYM",
+     "Un-code": 136
+    },
+    {
+     "country": "Central African Republic",
+     "2-code": "CF",
+     "3-code": "CAF",
+     "Un-code": 140
+    },
+    {
+     "country": "Chad",
+     "2-code": "TD",
+     "3-code": "TCD",
+     "Un-code": 148
+    },
+    {
+     "country": "Chile",
+     "2-code": "CL",
+     "3-code": "CHL",
+     "Un-code": 152
+    },
+    {
+     "country": "China",
+     "2-code": "CN",
+     "3-code": "CHN",
+     "Un-code": 156
+    },
+    {
+     "country": "Hong Kong, SAR China",
+     "2-code": "HK",
+     "3-code": "HKG",
+     "Un-code": 344
+    },
+    {
+     "country": "Macao, SAR China",
+     "2-code": "MO",
+     "3-code": "MAC",
+     "Un-code": 446
+    },
+    {
+     "country": "Christmas Island",
+     "2-code": "CX",
+     "3-code": "CXR",
+     "Un-code": 162
+    },
+    {
+     "country": "Cocos (Keeling) Islands",
+     "2-code": "CC",
+     "3-code": "CCK",
+     "Un-code": 166
+    },
+    {
+     "country": "Colombia",
+     "2-code": "CO",
+     "3-code": "COL",
+     "Un-code": 170
+    },
+    {
+     "country": "Comoros",
+     "2-code": "KM",
+     "3-code": "COM",
+     "Un-code": 174
+    },
+    {
+     "country": "Congo (Brazzaville)",
+     "2-code": "CG",
+     "3-code": "COG",
+     "Un-code": 178
+    },
+    {
+     "country": "Congo, (Kinshasa)",
+     "2-code": "CD",
+     "3-code": "COD",
+     "Un-code": 180
+    },
+    {
+     "country": "Cook Islands",
+     "2-code": "CK",
+     "3-code": "COK",
+     "Un-code": 184
+    },
+    {
+     "country": "Costa Rica",
+     "2-code": "CR",
+     "3-code": "CRI",
+     "Un-code": 188
+    },
+    {
+     "country": "Côte d'Ivoire",
+     "2-code": "CI",
+     "3-code": "CIV",
+     "Un-code": 384
+    },
+    {
+     "country": "Croatia",
+     "2-code": "HR",
+     "3-code": "HRV",
+     "Un-code": 191
+    },
+    {
+     "country": "Cuba",
+     "2-code": "CU",
+     "3-code": "CUB",
+     "Un-code": 192
+    },
+    {
+     "country": "Cyprus",
+     "2-code": "CY",
+     "3-code": "CYP",
+     "Un-code": 196
+    },
+    {
+     "country": "Czech Republic",
+     "2-code": "CZ",
+     "3-code": "CZE",
+     "Un-code": 203
+    },
+    {
+     "country": "Denmark",
+     "2-code": "DK",
+     "3-code": "DNK",
+     "Un-code": 208
+    },
+    {
+     "country": "Djibouti",
+     "2-code": "DJ",
+     "3-code": "DJI",
+     "Un-code": 262
+    },
+    {
+     "country": "Dominica",
+     "2-code": "DM",
+     "3-code": "DMA",
+     "Un-code": 212
+    },
+    {
+     "country": "Dominican Republic",
+     "2-code": "DO",
+     "3-code": "DOM",
+     "Un-code": 214
+    },
+    {
+     "country": "Ecuador",
+     "2-code": "EC",
+     "3-code": "ECU",
+     "Un-code": 218
+    },
+    {
+     "country": "Egypt",
+     "2-code": "EG",
+     "3-code": "EGY",
+     "Un-code": 818
+    },
+    {
+     "country": "El Salvador",
+     "2-code": "SV",
+     "3-code": "SLV",
+     "Un-code": 222
+    },
+    {
+     "country": "Equatorial Guinea",
+     "2-code": "GQ",
+     "3-code": "GNQ",
+     "Un-code": 226
+    },
+    {
+     "country": "Eritrea",
+     "2-code": "ER",
+     "3-code": "ERI",
+     "Un-code": 232
+    },
+    {
+     "country": "Estonia",
+     "2-code": "EE",
+     "3-code": "EST",
+     "Un-code": 233
+    },
+    {
+     "country": "Ethiopia",
+     "2-code": "ET",
+     "3-code": "ETH",
+     "Un-code": 231
+    },
+    {
+     "country": "Falkland Islands (Malvinas)",
+     "2-code": "FK",
+     "3-code": "FLK",
+     "Un-code": 238
+    },
+    {
+     "country": "Faroe Islands",
+     "2-code": "FO",
+     "3-code": "FRO",
+     "Un-code": 234
+    },
+    {
+     "country": "Fiji",
+     "2-code": "FJ",
+     "3-code": "FJI",
+     "Un-code": 242
+    },
+    {
+     "country": "Finland",
+     "2-code": "FI",
+     "3-code": "FIN",
+     "Un-code": 246
+    },
+    {
+     "country": "France",
+     "2-code": "FR",
+     "3-code": "FRA",
+     "Un-code": 250
+    },
+    {
+     "country": "French Guiana",
+     "2-code": "GF",
+     "3-code": "GUF",
+     "Un-code": 254
+    },
+    {
+     "country": "French Polynesia",
+     "2-code": "PF",
+     "3-code": "PYF",
+     "Un-code": 258
+    },
+    {
+     "country": "French Southern Territories",
+     "2-code": "TF",
+     "3-code": "ATF",
+     "Un-code": 260
+    },
+    {
+     "country": "Gabon",
+     "2-code": "GA",
+     "3-code": "GAB",
+     "Un-code": 266
+    },
+    {
+     "country": "Gambia",
+     "2-code": "GM",
+     "3-code": "GMB",
+     "Un-code": 270
+    },
+    {
+     "country": "Georgia",
+     "2-code": "GE",
+     "3-code": "GEO",
+     "Un-code": 268
+    },
+    {
+     "country": "Germany",
+     "2-code": "DE",
+     "3-code": "DEU",
+     "Un-code": 276
+    },
+    {
+     "country": "Ghana",
+     "2-code": "GH",
+     "3-code": "GHA",
+     "Un-code": 288
+    },
+    {
+     "country": "Gibraltar",
+     "2-code": "GI",
+     "3-code": "GIB",
+     "Un-code": 292
+    },
+    {
+     "country": "Greece",
+     "2-code": "GR",
+     "3-code": "GRC",
+     "Un-code": 300
+    },
+    {
+     "country": "Greenland",
+     "2-code": "GL",
+     "3-code": "GRL",
+     "Un-code": 304
+    },
+    {
+     "country": "Grenada",
+     "2-code": "GD",
+     "3-code": "GRD",
+     "Un-code": 308
+    },
+    {
+     "country": "Guadeloupe",
+     "2-code": "GP",
+     "3-code": "GLP",
+     "Un-code": 312
+    },
+    {
+     "country": "Guam",
+     "2-code": "GU",
+     "3-code": "GUM",
+     "Un-code": 316
+    },
+    {
+     "country": "Guatemala",
+     "2-code": "GT",
+     "3-code": "GTM",
+     "Un-code": 320
+    },
+    {
+     "country": "Guernsey",
+     "2-code": "GG",
+     "3-code": "GGY",
+     "Un-code": 831
+    },
+    {
+     "country": "Guinea",
+     "2-code": "GN",
+     "3-code": "GIN",
+     "Un-code": 324
+    },
+    {
+     "country": "Guinea-Bissau",
+     "2-code": "GW",
+     "3-code": "GNB",
+     "Un-code": 624
+    },
+    {
+     "country": "Guyana",
+     "2-code": "GY",
+     "3-code": "GUY",
+     "Un-code": 328
+    },
+    {
+     "country": "Haiti",
+     "2-code": "HT",
+     "3-code": "HTI",
+     "Un-code": 332
+    },
+    {
+     "country": "Heard and Mcdonald Islands",
+     "2-code": "HM",
+     "3-code": "HMD",
+     "Un-code": 334
+    },
+    {
+     "country": "Holy See (Vatican City State)",
+     "2-code": "VA",
+     "3-code": "VAT",
+     "Un-code": 336
+    },
+    {
+     "country": "Honduras",
+     "2-code": "HN",
+     "3-code": "HND",
+     "Un-code": 340
+    },
+    {
+     "country": "Hungary",
+     "2-code": "HU",
+     "3-code": "HUN",
+     "Un-code": 348
+    },
+    {
+     "country": "Iceland",
+     "2-code": "IS",
+     "3-code": "ISL",
+     "Un-code": 352
+    },
+    {
+     "country": "India",
+     "2-code": "IN",
+     "3-code": "IND",
+     "Un-code": 356
+    },
+    {
+     "country": "Indonesia",
+     "2-code": "ID",
+     "3-code": "IDN",
+     "Un-code": 360
+    },
+    {
+     "country": "Iran, Islamic Republic of",
+     "2-code": "IR",
+     "3-code": "IRN",
+     "Un-code": 364
+    },
+    {
+     "country": "Iraq",
+     "2-code": "IQ",
+     "3-code": "IRQ",
+     "Un-code": 368
+    },
+    {
+     "country": "Ireland",
+     "2-code": "IE",
+     "3-code": "IRL",
+     "Un-code": 372
+    },
+    {
+     "country": "Isle of Man",
+     "2-code": "IM",
+     "3-code": "IMN",
+     "Un-code": 833
+    },
+    {
+     "country": "Israel",
+     "2-code": "IL",
+     "3-code": "ISR",
+     "Un-code": 376
+    },
+    {
+     "country": "Italy",
+     "2-code": "IT",
+     "3-code": "ITA",
+     "Un-code": 380
+    },
+    {
+     "country": "Jamaica",
+     "2-code": "JM",
+     "3-code": "JAM",
+     "Un-code": 388
+    },
+    {
+     "country": "Japan",
+     "2-code": "JP",
+     "3-code": "JPN",
+     "Un-code": 392
+    },
+    {
+     "country": "Jersey",
+     "2-code": "JE",
+     "3-code": "JEY",
+     "Un-code": 832
+    },
+    {
+     "country": "Jordan",
+     "2-code": "JO",
+     "3-code": "JOR",
+     "Un-code": 400
+    },
+    {
+     "country": "Kazakhstan",
+     "2-code": "KZ",
+     "3-code": "KAZ",
+     "Un-code": 398
+    },
+    {
+     "country": "Kenya",
+     "2-code": "KE",
+     "3-code": "KEN",
+     "Un-code": 404
+    },
+    {
+     "country": "Kiribati",
+     "2-code": "KI",
+     "3-code": "KIR",
+     "Un-code": 296
+    },
+    {
+     "country": "Korea (North)",
+     "2-code": "KP",
+     "3-code": "PRK",
+     "Un-code": 408
+    },
+    {
+     "country": "Korea (South)",
+     "2-code": "KR",
+     "3-code": "KOR",
+     "Un-code": 410
+    },
+    {
+     "country": "Kuwait",
+     "2-code": "KW",
+     "3-code": "KWT",
+     "Un-code": 414
+    },
+    {
+     "country": "Kyrgyzstan",
+     "2-code": "KG",
+     "3-code": "KGZ",
+     "Un-code": 417
+    },
+    {
+     "country": "Lao PDR",
+     "2-code": "LA",
+     "3-code": "LAO",
+     "Un-code": 418
+    },
+    {
+     "country": "Latvia",
+     "2-code": "LV",
+     "3-code": "LVA",
+     "Un-code": 428
+    },
+    {
+     "country": "Lebanon",
+     "2-code": "LB",
+     "3-code": "LBN",
+     "Un-code": 422
+    },
+    {
+     "country": "Lesotho",
+     "2-code": "LS",
+     "3-code": "LSO",
+     "Un-code": 426
+    },
+    {
+     "country": "Liberia",
+     "2-code": "LR",
+     "3-code": "LBR",
+     "Un-code": 430
+    },
+    {
+     "country": "Libya",
+     "2-code": "LY",
+     "3-code": "LBY",
+     "Un-code": 434
+    },
+    {
+     "country": "Liechtenstein",
+     "2-code": "LI",
+     "3-code": "LIE",
+     "Un-code": 438
+    },
+    {
+     "country": "Lithuania",
+     "2-code": "LT",
+     "3-code": "LTU",
+     "Un-code": 440
+    },
+    {
+     "country": "Luxembourg",
+     "2-code": "LU",
+     "3-code": "LUX",
+     "Un-code": 442
+    },
+    {
+     "country": "Macedonia, Republic of",
+     "2-code": "MK",
+     "3-code": "MKD",
+     "Un-code": 807
+    },
+    {
+     "country": "Madagascar",
+     "2-code": "MG",
+     "3-code": "MDG",
+     "Un-code": 450
+    },
+    {
+     "country": "Malawi",
+     "2-code": "MW",
+     "3-code": "MWI",
+     "Un-code": 454
+    },
+    {
+     "country": "Malaysia",
+     "2-code": "MY",
+     "3-code": "MYS",
+     "Un-code": 458
+    },
+    {
+     "country": "Maldives",
+     "2-code": "MV",
+     "3-code": "MDV",
+     "Un-code": 462
+    },
+    {
+     "country": "Mali",
+     "2-code": "ML",
+     "3-code": "MLI",
+     "Un-code": 466
+    },
+    {
+     "country": "Malta",
+     "2-code": "MT",
+     "3-code": "MLT",
+     "Un-code": 470
+    },
+    {
+     "country": "Marshall Islands",
+     "2-code": "MH",
+     "3-code": "MHL",
+     "Un-code": 584
+    },
+    {
+     "country": "Martinique",
+     "2-code": "MQ",
+     "3-code": "MTQ",
+     "Un-code": 474
+    },
+    {
+     "country": "Mauritania",
+     "2-code": "MR",
+     "3-code": "MRT",
+     "Un-code": 478
+    },
+    {
+     "country": "Mauritius",
+     "2-code": "MU",
+     "3-code": "MUS",
+     "Un-code": 480
+    },
+    {
+     "country": "Mayotte",
+     "2-code": "YT",
+     "3-code": "MYT",
+     "Un-code": 175
+    },
+    {
+     "country": "Mexico",
+     "2-code": "MX",
+     "3-code": "MEX",
+     "Un-code": 484
+    },
+    {
+     "country": "Micronesia, Federated States of",
+     "2-code": "FM",
+     "3-code": "FSM",
+     "Un-code": 583
+    },
+    {
+     "country": "Moldova",
+     "2-code": "MD",
+     "3-code": "MDA",
+     "Un-code": 498
+    },
+    {
+     "country": "Monaco",
+     "2-code": "MC",
+     "3-code": "MCO",
+     "Un-code": 492
+    },
+    {
+     "country": "Mongolia",
+     "2-code": "MN",
+     "3-code": "MNG",
+     "Un-code": 496
+    },
+    {
+     "country": "Montenegro",
+     "2-code": "ME",
+     "3-code": "MNE",
+     "Un-code": 499
+    },
+    {
+     "country": "Montserrat",
+     "2-code": "MS",
+     "3-code": "MSR",
+     "Un-code": 500
+    },
+    {
+     "country": "Morocco",
+     "2-code": "MA",
+     "3-code": "MAR",
+     "Un-code": 504
+    },
+    {
+     "country": "Mozambique",
+     "2-code": "MZ",
+     "3-code": "MOZ",
+     "Un-code": 508
+    },
+    {
+     "country": "Myanmar",
+     "2-code": "MM",
+     "3-code": "MMR",
+     "Un-code": 104
+    },
+    {
+     "country": "Namibia",
+     "2-code": "NA",
+     "3-code": "NAM",
+     "Un-code": 516
+    },
+    {
+     "country": "Nauru",
+     "2-code": "NR",
+     "3-code": "NRU",
+     "Un-code": 520
+    },
+    {
+     "country": "Nepal",
+     "2-code": "NP",
+     "3-code": "NPL",
+     "Un-code": 524
+    },
+    {
+     "country": "Netherlands",
+     "2-code": "NL",
+     "3-code": "NLD",
+     "Un-code": 528
+    },
+    {
+     "country": "Netherlands Antilles",
+     "2-code": "AN",
+     "3-code": "ANT",
+     "Un-code": 530
+    },
+    {
+     "country": "New Caledonia",
+     "2-code": "NC",
+     "3-code": "NCL",
+     "Un-code": 540
+    },
+    {
+     "country": "New Zealand",
+     "2-code": "NZ",
+     "3-code": "NZL",
+     "Un-code": 554
+    },
+    {
+     "country": "Nicaragua",
+     "2-code": "NI",
+     "3-code": "NIC",
+     "Un-code": 558
+    },
+    {
+     "country": "Niger",
+     "2-code": "NE",
+     "3-code": "NER",
+     "Un-code": 562
+    },
+    {
+     "country": "Nigeria",
+     "2-code": "NG",
+     "3-code": "NGA",
+     "Un-code": 566
+    },
+    {
+     "country": "Niue",
+     "2-code": "NU",
+     "3-code": "NIU",
+     "Un-code": 570
+    },
+    {
+     "country": "Norfolk Island",
+     "2-code": "NF",
+     "3-code": "NFK",
+     "Un-code": 574
+    },
+    {
+     "country": "Northern Mariana Islands",
+     "2-code": "MP",
+     "3-code": "MNP",
+     "Un-code": 580
+    },
+    {
+     "country": "Norway",
+     "2-code": "NO",
+     "3-code": "NOR",
+     "Un-code": 578
+    },
+    {
+     "country": "Oman",
+     "2-code": "OM",
+     "3-code": "OMN",
+     "Un-code": 512
+    },
+    {
+     "country": "Pakistan",
+     "2-code": "PK",
+     "3-code": "PAK",
+     "Un-code": 586
+    },
+    {
+     "country": "Palau",
+     "2-code": "PW",
+     "3-code": "PLW",
+     "Un-code": 585
+    },
+    {
+     "country": "Palestinian Territory",
+     "2-code": "PS",
+     "3-code": "PSE",
+     "Un-code": 275
+    },
+    {
+     "country": "Panama",
+     "2-code": "PA",
+     "3-code": "PAN",
+     "Un-code": 591
+    },
+    {
+     "country": "Papua New Guinea",
+     "2-code": "PG",
+     "3-code": "PNG",
+     "Un-code": 598
+    },
+    {
+     "country": "Paraguay",
+     "2-code": "PY",
+     "3-code": "PRY",
+     "Un-code": 600
+    },
+    {
+     "country": "Peru",
+     "2-code": "PE",
+     "3-code": "PER",
+     "Un-code": 604
+    },
+    {
+     "country": "Philippines",
+     "2-code": "PH",
+     "3-code": "PHL",
+     "Un-code": 608
+    },
+    {
+     "country": "Pitcairn",
+     "2-code": "PN",
+     "3-code": "PCN",
+     "Un-code": 612
+    },
+    {
+     "country": "Poland",
+     "2-code": "PL",
+     "3-code": "POL",
+     "Un-code": 616
+    },
+    {
+     "country": "Portugal",
+     "2-code": "PT",
+     "3-code": "PRT",
+     "Un-code": 620
+    },
+    {
+     "country": "Puerto Rico",
+     "2-code": "PR",
+     "3-code": "PRI",
+     "Un-code": 630
+    },
+    {
+     "country": "Qatar",
+     "2-code": "QA",
+     "3-code": "QAT",
+     "Un-code": 634
+    },
+    {
+     "country": "Réunion",
+     "2-code": "RE",
+     "3-code": "REU",
+     "Un-code": 638
+    },
+    {
+     "country": "Romania",
+     "2-code": "RO",
+     "3-code": "ROU",
+     "Un-code": 642
+    },
+    {
+     "country": "Russian Federation",
+     "2-code": "RU",
+     "3-code": "RUS",
+     "Un-code": 643
+    },
+    {
+     "country": "Rwanda",
+     "2-code": "RW",
+     "3-code": "RWA",
+     "Un-code": 646
+    },
+    {
+     "country": "Saint-Barthélemy",
+     "2-code": "BL",
+     "3-code": "BLM",
+     "Un-code": 652
+    },
+    {
+     "country": "Saint Helena",
+     "2-code": "SH",
+     "3-code": "SHN",
+     "Un-code": 654
+    },
+    {
+     "country": "Saint Kitts and Nevis",
+     "2-code": "KN",
+     "3-code": "KNA",
+     "Un-code": 659
+    },
+    {
+     "country": "Saint Lucia",
+     "2-code": "LC",
+     "3-code": "LCA",
+     "Un-code": 662
+    },
+    {
+     "country": "Saint-Martin (French part)",
+     "2-code": "MF",
+     "3-code": "MAF",
+     "Un-code": 663
+    },
+    {
+     "country": "Saint Pierre and Miquelon",
+     "2-code": "PM",
+     "3-code": "SPM",
+     "Un-code": 666
+    },
+    {
+     "country": "Saint Vincent and Grenadines",
+     "2-code": "VC",
+     "3-code": "VCT",
+     "Un-code": 670
+    },
+    {
+     "country": "Samoa",
+     "2-code": "WS",
+     "3-code": "WSM",
+     "Un-code": 882
+    },
+    {
+     "country": "San Marino",
+     "2-code": "SM",
+     "3-code": "SMR",
+     "Un-code": 674
+    },
+    {
+     "country": "Sao Tome and Principe",
+     "2-code": "ST",
+     "3-code": "STP",
+     "Un-code": 678
+    },
+    {
+     "country": "Saudi Arabia",
+     "2-code": "SA",
+     "3-code": "SAU",
+     "Un-code": 682
+    },
+    {
+     "country": "Senegal",
+     "2-code": "SN",
+     "3-code": "SEN",
+     "Un-code": 686
+    },
+    {
+     "country": "Serbia",
+     "2-code": "RS",
+     "3-code": "SRB",
+     "Un-code": 688
+    },
+    {
+     "country": "Seychelles",
+     "2-code": "SC",
+     "3-code": "SYC",
+     "Un-code": 690
+    },
+    {
+     "country": "Sierra Leone",
+     "2-code": "SL",
+     "3-code": "SLE",
+     "Un-code": 694
+    },
+    {
+     "country": "Singapore",
+     "2-code": "SG",
+     "3-code": "SGP",
+     "Un-code": 702
+    },
+    {
+     "country": "Slovakia",
+     "2-code": "SK",
+     "3-code": "SVK",
+     "Un-code": 703
+    },
+    {
+     "country": "Slovenia",
+     "2-code": "SI",
+     "3-code": "SVN",
+     "Un-code": 705
+    },
+    {
+     "country": "Solomon Islands",
+     "2-code": "SB",
+     "3-code": "SLB",
+     "Un-code": 90
+    },
+    {
+     "country": "Somalia",
+     "2-code": "SO",
+     "3-code": "SOM",
+     "Un-code": 706
+    },
+    {
+     "country": "South Africa",
+     "2-code": "ZA",
+     "3-code": "ZAF",
+     "Un-code": 710
+    },
+    {
+     "country": "South Georgia and the South Sandwich Islands",
+     "2-code": "GS",
+     "3-code": "SGS",
+     "Un-code": 239
+    },
+    {
+     "country": "South Sudan",
+     "2-code": "SS",
+     "3-code": "SSD",
+     "Un-code": 728
+    },
+    {
+     "country": "Spain",
+     "2-code": "ES",
+     "3-code": "ESP",
+     "Un-code": 724
+    },
+    {
+     "country": "Sri Lanka",
+     "2-code": "LK",
+     "3-code": "LKA",
+     "Un-code": 144
+    },
+    {
+     "country": "Sudan",
+     "2-code": "SD",
+     "3-code": "SDN",
+     "Un-code": 736
+    },
+    {
+     "country": "Suriname",
+     "2-code": "SR",
+     "3-code": "SUR",
+     "Un-code": 740
+    },
+    {
+     "country": "Svalbard and Jan Mayen Islands",
+     "2-code": "SJ",
+     "3-code": "SJM",
+     "Un-code": 744
+    },
+    {
+     "country": "Swaziland",
+     "2-code": "SZ",
+     "3-code": "SWZ",
+     "Un-code": 748
+    },
+    {
+     "country": "Sweden",
+     "2-code": "SE",
+     "3-code": "SWE",
+     "Un-code": 752
+    },
+    {
+     "country": "Switzerland",
+     "2-code": "CH",
+     "3-code": "CHE",
+     "Un-code": 756
+    },
+    {
+     "country": "Syrian Arab Republic (Syria)",
+     "2-code": "SY",
+     "3-code": "SYR",
+     "Un-code": 760
+    },
+    {
+     "country": "Taiwan, Republic of China",
+     "2-code": "TW",
+     "3-code": "TWN",
+     "Un-code": 158
+    },
+    {
+     "country": "Tajikistan",
+     "2-code": "TJ",
+     "3-code": "TJK",
+     "Un-code": 762
+    },
+    {
+     "country": "Tanzania, United Republic of",
+     "2-code": "TZ",
+     "3-code": "TZA",
+     "Un-code": 834
+    },
+    {
+     "country": "Thailand",
+     "2-code": "TH",
+     "3-code": "THA",
+     "Un-code": 764
+    },
+    {
+     "country": "Timor-Leste",
+     "2-code": "TL",
+     "3-code": "TLS",
+     "Un-code": 626
+    },
+    {
+     "country": "Togo",
+     "2-code": "TG",
+     "3-code": "TGO",
+     "Un-code": 768
+    },
+    {
+     "country": "Tokelau",
+     "2-code": "TK",
+     "3-code": "TKL",
+     "Un-code": 772
+    },
+    {
+     "country": "Tonga",
+     "2-code": "TO",
+     "3-code": "TON",
+     "Un-code": 776
+    },
+    {
+     "country": "Trinidad and Tobago",
+     "2-code": "TT",
+     "3-code": "TTO",
+     "Un-code": 780
+    },
+    {
+     "country": "Tunisia",
+     "2-code": "TN",
+     "3-code": "TUN",
+     "Un-code": 788
+    },
+    {
+     "country": "Turkey",
+     "2-code": "TR",
+     "3-code": "TUR",
+     "Un-code": 792
+    },
+    {
+     "country": "Turkmenistan",
+     "2-code": "TM",
+     "3-code": "TKM",
+     "Un-code": 795
+    },
+    {
+     "country": "Turks and Caicos Islands",
+     "2-code": "TC",
+     "3-code": "TCA",
+     "Un-code": 796
+    },
+    {
+     "country": "Tuvalu",
+     "2-code": "TV",
+     "3-code": "TUV",
+     "Un-code": 798
+    },
+    {
+     "country": "Uganda",
+     "2-code": "UG",
+     "3-code": "UGA",
+     "Un-code": 800
+    },
+    {
+     "country": "Ukraine",
+     "2-code": "UA",
+     "3-code": "UKR",
+     "Un-code": 804
+    },
+    {
+     "country": "United Arab Emirates",
+     "2-code": "AE",
+     "3-code": "ARE",
+     "Un-code": 784
+    },
+    {
+     "country": "United Kingdom",
+     "2-code": "GB",
+     "3-code": "GBR",
+     "Un-code": 826
+    },
+    {
+     "country": "United States of America",
+     "2-code": "US",
+     "3-code": "USA",
+     "Un-code": 840
+    },
+    {
+     "country": "US Minor Outlying Islands",
+     "2-code": "UM",
+     "3-code": "UMI",
+     "Un-code": 581
+    },
+    {
+     "country": "Uruguay",
+     "2-code": "UY",
+     "3-code": "URY",
+     "Un-code": 858
+    },
+    {
+     "country": "Uzbekistan",
+     "2-code": "UZ",
+     "3-code": "UZB",
+     "Un-code": 860
+    },
+    {
+     "country": "Vanuatu",
+     "2-code": "VU",
+     "3-code": "VUT",
+     "Un-code": 548
+    },
+    {
+     "country": "Venezuela (Bolivarian Republic)",
+     "2-code": "VE",
+     "3-code": "VEN",
+     "Un-code": 862
+    },
+    {
+     "country": "Viet Nam",
+     "2-code": "VN",
+     "3-code": "VNM",
+     "Un-code": 704
+    },
+    {
+     "country": "Virgin Islands, US",
+     "2-code": "VI",
+     "3-code": "VIR",
+     "Un-code": 850
+    },
+    {
+     "country": "Wallis and Futuna Islands",
+     "2-code": "WF",
+     "3-code": "WLF",
+     "Un-code": 876
+    },
+    {
+     "country": "Western Sahara",
+     "2-code": "EH",
+     "3-code": "ESH",
+     "Un-code": 732
+    },
+    {
+     "country": "Yemen",
+     "2-code": "YE",
+     "3-code": "YEM",
+     "Un-code": 887
+    },
+    {
+     "country": "Zambia",
+     "2-code": "ZM",
+     "3-code": "ZMB",
+     "Un-code": 894
+    },
+    {
+     "country": "Zimbabwe",
+     "2-code": "ZW",
+     "3-code": "ZWE",
+     "Un-code": 716
+    }
+   ]

@@ -1,0 +1,200 @@
+.row1 {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -15px;
+}
+
+[class*="coll-"] {
+  padding: 0 15px;
+}
+
+.coll-1 {
+  width: 8.33%;
+}
+
+.coll-2 {
+  width: 16.66%;
+}
+
+.coll-3 {
+  width: 25%;
+}
+
+.coll-4 {
+  width: 33.33%;
+}
+
+.coll-5 {
+  width: 41.66%;
+}
+
+.coll-6 {
+  width: 50%;
+}
+
+.coll-7 {
+  width: 58.33%;
+}
+
+.coll-8 {
+  width: 66.66%;
+}
+
+.coll-9 {
+  width: 75%;
+}
+
+.coll-10 {
+  width: 83.33%;
+}
+
+.coll-11 {
+  width: 91.66%;
+}
+
+.coll-12 {
+  width: 100%;
+}
+
+/* MEDIUM SCREEN */
+
+@media only screen and (max-width: 1280px) {
+  .coll-md-1 {
+    width: 8.33%;
+  }
+
+  .coll-md-2 {
+    width: 16.66%;
+  }
+
+  .coll-md-3 {
+    width: 25%;
+  }
+
+  .coll-md-4 {
+    width: 33.33%;
+  }
+
+  .coll-md-5 {
+    width: 41.66%;
+  }
+
+  .coll-md-6 {
+    width: 50%;
+  }
+
+  .coll-md-7 {
+    width: 58.33%;
+  }
+
+  .coll-md-8 {
+    width: 66.66%;
+  }
+
+  .coll-md-9 {
+    width: 75%;
+  }
+
+  .coll-md-10 {
+    width: 83.33%;
+  }
+
+  .coll-md-11 {
+    width: 91.66%;
+  }
+
+  .coll-md-12 {
+    width: 100%;
+  }
+}
+
+/* SMALL SCREEN */
+
+@media only screen and (max-width: 500px) {
+  .coll-sm-1 {
+    width: 8.33%;
+  }
+
+  .coll-sm-2 {
+    width: 16.66%;
+  }
+
+  .coll-sm-3 {
+    width: 25%;
+  }
+
+  .coll-sm-4 {
+    width: 33.33%;
+  }
+
+  .coll-sm-5 {
+    width: 41.66%;
+  }
+
+  .coll-sm-6 {
+    width: 50%;
+  }
+
+  .coll-sm-7 {
+    width: 58.33%;
+  }
+
+  .coll-sm-8 {
+    width: 66.66%;
+  }
+
+  .coll-sm-9 {
+    width: 75%;
+  }
+
+  .coll-sm-10 {
+    width: 83.33%;
+  }
+
+  .coll-sm-11 {
+    width: 91.66%;
+  }
+
+  .coll-sm-12 {
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .coll-4,
+  .coll-6,
+  .coll-8 ,
+  .coll-7,
+  .coll-9 {
+    width: 100%;
+  }
+  /*dashboard*/
+  table tbody tr td {
+    font-size: 12px;
+  }
+  table tbody tr th {
+    font-size: 14px;
+  }
+  .chart {
+    display: none;
+  }
+  .coll-8
+    .card
+    .card__body
+    .table-wrapper
+    > table
+    > thead
+    > tr
+    > th:nth-child(2),
+  .coll-8
+    .card
+    .card__body
+    .table-wrapper
+    > table
+    > tbody
+    > tr
+    > td:nth-child(2) {
+    /*background-color: brown;*/
+    display: none;
+  }
+}

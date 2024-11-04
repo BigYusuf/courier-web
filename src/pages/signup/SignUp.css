@@ -1,0 +1,253 @@
+.signup {
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.signup .left {
+  flex: 1;
+  background-image: linear-gradient(#000e2e, #004f5a);
+  position: relative;
+}
+.signup .left .bubbles {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  position: absolute;
+  bottom: -70px;
+}
+.signup .left .bubbles .bubbleimg {
+  width: 50px;
+  animation: bubble 7s linear infinite;
+}
+
+.signup .left .bubbles .bubbleimg:nth-child(1) {
+  animation-delay: 2s;
+  width: 12px;
+}
+
+.signup .left .bubbles .bubbleimg:nth-child(2) {
+  animation-delay: 1s;
+  width: 25px;
+}
+
+.signup .left .bubbles .bubbleimg:nth-child(3) {
+  animation-delay: 4.5s;
+}
+
+.signup .left .bubbles .bubbleimg:nth-child(4) {
+  animation-delay: 3s;
+  width: 40px;
+}
+
+.signup .left .bubbles .bubbleimg:nth-child(5) {
+  width: 6px;
+  animation-delay: 7s;
+}
+.signup .right {
+  flex: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.signup .right .closeBtn,
+.signup .right .closeIcon {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  padding: 10px;
+  font-size: 30px;
+  border: 0.5px solid;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.signup .right .closeBtn:hover,
+.signup .right .closeIcon:hover {
+  color: var(--main-color);
+}
+
+.signup .right .content {
+  position: relative;
+  padding: 30px;
+  width: 100%;
+  max-width: 416px;
+}
+.signup .right .content h1 {
+  font-size: 26px;
+  font-weight: bold;
+  /* margin-bottom: 40px; */
+}
+
+.signup .right .content .half {
+  width: 45% !important;
+}
+.signup .right .content .joinTwoInput {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.signup .right .content .inputWrapper {
+  width: 100%;
+  margin-bottom: 15px;
+}
+.signup .right .content .inputWrapper .label {
+  display: block;
+  margin: 14px 0 4px;
+  color: #0d0c22;
+  text-align: left;
+  font-size: 20px;
+  font-weight: bold;
+}
+.signup .right .content .inputWrapper .select,
+.signup .right .content .inputWrapper .input {
+  width: 100%;
+  height: 60px;
+  border: 2px solid #e7e7e9;
+  font-size: 14px;
+  padding: 10px;
+  border-radius: 12px;
+  outline: none;
+  background-color: #fff;
+  color: #0d0c22;
+  box-sizing: border-box;
+}
+.signup .right .content .inputWrapper option {
+  width: max-content;
+  color: #0d0c22;
+  gap: 15px;
+  height: 10px;
+}
+
+.signup .right .content button {
+  width: 100%;
+  height: 55px;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 30px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+.signup .right .content .googleBtn {
+  background-color: var(--main-bg-dark);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.signup .right .content .googleBtn:hover {
+  background-color: #fff;
+  color: var(--dark-bg);
+}
+.signup .right .content .emailBtn {
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.signup .right .content .emailBtn:hover {
+  border-color: #6e6d7a;
+}
+.signup .right .content .dividerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.signup .right .content .dividerContainer .divider {
+  height: 1px;
+  margin: 15px 0;
+  padding: 0;
+  overflow: visible;
+  border: none;
+  background-color: #e7e7e9;
+  color: #6e6d7a;
+  width: 45%;
+}
+.signup .right .content .dividerContainer .dividerText {
+  text-align: center;
+  padding: 5px;
+}
+.signup .right .content div {
+  color: #3d3d4e;
+  text-align: center;
+  font-weight: 400;
+}
+.signup .right .content .disclaimer span {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.signup .right .content .disclaimer {
+  line-height: 18px;
+  font-size: 14px;
+  margin-bottom: 16px;
+  cursor: pointer;
+
+}
+.signup .right .content .disclaimer  input{
+ margin-right: 10px ;
+
+}
+.signup .right .content .other {
+  margin-top: 10px;
+  font-size: 14px;
+  margin: 20px 0;
+}
+.signup .right .content .other a:hover {
+  color: var(--main-color);
+}
+.sendEmail {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  align-items: center;
+}
+@keyframes bubble {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-70vh);
+    opacity: 0;
+  }
+}
+
+@media only screen and (max-width: 320px) {
+  .signup .left {
+    display: none;
+  }
+  .signup .right {
+    width: 100%;
+  }
+
+  .signup .right .content h1 {
+    font-size: 25px;
+  }
+  .signup .right .content .inputWrapper .label {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .signup .right .content button {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .signup .right .content .inputWrapper .select,
+  .signup .right .content .inputWrapper .input {
+    height: 40px;
+  }
+}

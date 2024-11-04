@@ -1,0 +1,44 @@
+.input__container {
+    flex-direction: column;
+    justify-content: center;
+    display: flex;
+}
+
+.input__tab {
+    position: relative;
+    height: 50px;
+    background-color: var(--main-bg);
+    display: flex;
+    align-items: center;
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.input__tab>input {
+    height: 100%;
+    width: 100%;
+    padding: 10px 60px 10px 20px;
+    font-size: 1rem;
+    border-radius: var(--border-radius);
+    color: var(--txt-color);
+    background-color: var(--main-bg);
+}
+
+.input__tab>i {
+    font-size: 1.5rem;
+    position: absolute;
+    right: 20px;
+}
+
+.input__button {
+    width: 70px;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: var(--main-bg);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    box-shadow: var(--box-shadow);
+    align-self:self-end;
+    display: flex;
+}
