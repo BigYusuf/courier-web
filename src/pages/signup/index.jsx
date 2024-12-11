@@ -4,11 +4,15 @@ import { useDispatch } from "react-redux";
 
 import "./SignUp.css";
 import country from "../../data/country.json";
-// import { uploadFile } from '../../utils';
-// import { useRegisterMutation } from '../../state/api';
-// import { setCredentials } from "../../state/slice/authSlice";
+
 import bubbleImage from "../../assets/images/bubble.png";
-import { Button, CompleteInput, ModalOptions } from "../../components";
+import { Button, ModalOptions } from "../../components";
+import {
+  useRegisterMutation,
+  useSendOtpMutation,
+  useVerifyEmailMutation,
+} from "../../redux/slice/auth";
+import { toast } from "react-toastify";
 
 const SignUp = () => {
   const initialValues = {
@@ -20,14 +24,17 @@ const SignUp = () => {
     image: "",
     city: "",
     state: "",
+    token: "",
   };
   const [openModal, setOpenModal] = useState("");
   const [stageOne, setStageOne] = useState(true);
   const [stageTwo, setStageTwo] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [sendMail, setSendMail] = useState(false);
+  // const [isVerified, setIsVerified] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState(initialValues);
-  const [file, setFile] = useState("");
-  const [img, setImg] = useState("");
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -37,11 +44,7 @@ const SignUp = () => {
     }
   };
   const handleCancel = () => {
-    setFile("");
     setOpenModal(false);
-  };
-  const handleFile = (e) => {
-    setFile(e.target.files[0]);
   };
 
   const handleInputChange = (e) => {
@@ -51,34 +54,69 @@ const SignUp = () => {
       [name]: value,
     }));
   };
-  // const [register, {error, isLoading}] = useRegisterMutation();
+  const [register] = useRegisterMutation();
+  const [sendOtp] = useSendOtpMutation();
+  const [verifyEmail] = useVerifyEmailMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      formData["image"] = img;
-      //  const LoggedIn = await register(formData)
-      //  dispatch(setCredentials(LoggedIn))
+      // formData["image"] = img;
+      const redUser = await register(formData);
+      if (redUser?.data?.success) {
+        toast.success("Account created");
+        navigate("/dashboard");
+      } else {
+        toast.error(redUser?.error?.data?.message);
+      }
+      // console.log(redUser);
+      // dispatch(setCredentials(redUser))
       navigate("/dashboard");
-      //   if(error){
-      //       console.log(error)
-      //   }
     } catch (err) {
       console.log(err.data.message);
     }
   };
 
   const handleOption = async () => {
-    // let url = await uploadFile(file);
-    // setImg(url);
-    setStageOne(false);
-    setStageTwo(true);
-    setOpenModal(false);
-  };
-  const handleSendOtp = async (e) => {
-    e.preventDefault();
+    try {
+      setLoading(true);
+      if (!formData?.email) {
+        toast.error("Email is required");
+        setLoading(false);
+        return;
+      }
+      if (!sendMail) {
+        const mailSent = await sendOtp(formData);
+        if (mailSent?.data?.success) {
+          toast.success("Mail Sent");
+          setSendMail(true);
+        } else {
+          toast.error(mailSent?.error?.data?.message);
+        }
+        setLoading(false);
+      } else {
+        if (!formData?.token) {
+          toast.error("OTP is required");
+          setLoading(false);
+          return;
+        }
+        const verify = await verifyEmail(formData);
 
-    navigate("/register");
+        if (verify?.data?.success) {
+          setStageOne(false);
+          setStageTwo(true);
+          setOpenModal(false);
+        } else {
+          toast.error(verify?.error?.data?.message);
+        }
+
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log("error", error);
+      toast.error(error ? error?.message : "Error occured");
+      setLoading(false);
+    }
   };
 
   return (
@@ -118,22 +156,50 @@ const SignUp = () => {
             {openModal && (
               <ModalOptions
                 file={formData?.email}
-                title={"Send Email OTP"}
+                title={""}
                 handleCancel={handleCancel}
                 handleOption={handleOption}
               >
-                <div className="sendEmail">
-                  <CompleteInput
-                    name="email"
-                    title={"Email"}
-                    type="text"
-                    onChange={handleInputChange}
-                    dataLabel={formData?.email}
-                    value={formData?.email}
-                    cancel={""}
-                  />
-                  <Button onClick={handleOption} title="Send" />
-                </div>
+                <>
+                  <div className="sendEmail">
+                    <span className="text-xl font-semibold text-yellow-600 mb-4">
+                      {sendMail ? "Verify Email" : "Getting Started"}
+                    </span>
+                    {/* <div className="flex justify-between w-full ">
+                      <div className="mostIcon">
+                        <i className="bx bx-mail-send"></i>
+                      </div>
+                      <div className="mostIcon">
+                        <i className="bx bxs-doughnut-chart"></i>
+                      </div>
+                    </div> */}
+                    {!sendMail ? (
+                      <input
+                        type="text"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        name="email"
+                        placeholder="Enter a valid Email"
+                        className="w-full px-4 rounded-2xl border border-yellow-600 bg-pink my-4 h-[50px]"
+                      />
+                    ) : (
+                      <input
+                        type="text"
+                        value={formData.token}
+                        onChange={handleInputChange}
+                        name="token"
+                        placeholder="Enter a OTP"
+                        className="w-full px-4 rounded-2xl border border-yellow-600 bg-pink my-4 h-[50px]"
+                      />
+                    )}
+
+                    <Button
+                      onClick={handleOption}
+                      loading={loading ? loading : null}
+                      title={sendMail ? "Verify otp" : "Send"}
+                    />
+                  </div>
+                </>
                 {/*
                 <label className="customRadio">
                    <label className={!file ? "inputLabel" : "changeLabel"}>
@@ -224,7 +290,7 @@ const SignUp = () => {
               <div className="inputWrapper half">
                 <label className="label">State</label>
                 <input
-                  name="State"
+                  name="state"
                   onChange={handleInputChange}
                   className="input"
                   value={formData?.state}
@@ -242,9 +308,13 @@ const SignUp = () => {
                   className="select"
                   type="text"
                 >
-                  <option value="">Select Country</option>
+                  {/* <option value="">Select Country</option> */}
                   {country.map((item) => (
-                    <option key={item.country} value={item["3-code"]}>
+                    <option
+                      defaultValue={"NGA"}
+                      key={item.country}
+                      value={item["3-code"]}
+                    >
                       {item.country}
                     </option>
                   ))}

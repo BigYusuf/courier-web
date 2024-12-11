@@ -15,16 +15,22 @@ const ModalOptions = ({
   children,
   handleOption,
   loading,
+  bg,
+  top,
 }) => {
   const navigate = useNavigate();
   return (
-    <div className="modalOptions">
+    <div
+      style={{ top: top ? `${top}px` : "100%" }}
+      className={bg ? "modalOptions1" : `modalOptions`}
+      onClick={handleCancel}
+    >
       <div className="modalContainer" onClick={(e) => e.stopPropagation()}>
         <div className="closeBtn" onClick={handleCancel}>
           <i className="bx bx-x"></i>
         </div>
 
-        <h2>{title}</h2>
+        <h2 className="text-xl mb-2">{title}</h2>
         <div className="modalBody">{children}</div>
         <div className="modalFooter">
           {btnText && (

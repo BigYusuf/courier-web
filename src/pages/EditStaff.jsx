@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { serverTimestamp } from "firebase/firestore";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
 import ModalOptions from "../components/modalOption";
-import ProjectDataService from "../utils/firebaseUtils";
-import { getSingleUser } from "../redux/slice/auth";
-import { convertTimeStamp } from "../utils/others";
-import FeedBackBystaffId from "../components/singleUserFeedback";
-import { fetchManagers, fetchUsers } from "../utils/fetch";
-import { nationData } from "../data/registerData";
 import { CompleteInput, LoadingBox } from "../components";
+import { useGetStaffQuery } from "../redux/slice/user";
+import { convertTimeStamp } from "../utils/others";
+import { countryData } from "../data/countries";
+import { statusData } from "../data/statusData";
 
 const QuestionAns = ({ question, ans }) => {
   return (
@@ -23,68 +20,20 @@ const QuestionAns = ({ question, ans }) => {
 };
 const EditManager = () => {
   const { pathname } = useLocation();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const staffId = pathname.slice(10);
+  const staffId = pathname.slice(8);
+  const myProfile = useSelector((state) => state.auth.profile);
+  const { data: staffInfo } = useGetStaffQuery(staffId);
 
-  const managerProfile = useSelector((state) => state?.auth?.manager);
-  const myProfile = useSelector((state) => state.auth.user);
-
-  const [staffInfo, setStaffInfo] = useState(null);
-  const [staffInfoId, setStaffInfoId] = useState("");
-  const [userInfo, setUserInfo] = useState(null);
   const [userLoading, setUserLoading] = useState(false);
   const [editUser, setEditUser] = useState(false);
   const [editManager, setEditManager] = useState(false);
-  const [formData, setFormData] = useState(staffInfo);
-  const [userData, setUserData] = useState(userInfo);
+  const [formData, setFormData] = useState(staffInfo?.staff);
 
-  const GetStaff = async () => {
-    try {
-      setLoading(true);
-      const docSnap = await ProjectDataService.getManager(staffId);
-      setStaffInfo(docSnap.data());
-      setStaffInfoId(docSnap?.id);
-      setLoading(false);
-    } catch (error) {
-      toast.error(
-        error?.message ? error?.message : "Error occured while getting staff"
-      );
-      setLoading(false);
-    }
-  };
   useEffect(() => {
-    GetStaff();
+    if (staffInfo?.staff) setFormData(staffInfo?.staff);
   }, []);
 
-  const GetUser = async () => {
-    if (!staffInfo?.userId) {
-      return;
-    }
-    try {
-      const docSnap = await ProjectDataService.getUser(staffInfo?.userId);
-      setUserInfo(docSnap.data());
-    } catch (error) {
-      console.log("err", error);
-      toast.error(
-        error?.message ? error?.message : "Error occured while getting user"
-      );
-    }
-  };
-  useEffect(() => {
-    setFormData(staffInfo);
-    // setUserLoading(true);
-    GetUser();
-    //setUserLoading(false);
-  }, [staffInfo]);
-
-  useEffect(() => {
-    if (userInfo !== null) {
-      setUserData(userInfo);
-    }
-  }, [userInfo]);
-
-  const [file, setFile] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [hideProfile, setHideProfile] = useState(false);
@@ -109,10 +58,10 @@ const EditManager = () => {
 
   const GetSingleFeedBack = async (id) => {
     //setLoading(true);
-    const docSnap = await ProjectDataService.getFeedback(id);
-    setFeedbackData(docSnap.data());
-    setFeedbackForm(docSnap.data());
-    //setLoading(false);
+    // const docSnap = await ProjectDataService.getFeedback(id);
+    // setFeedbackData(docSnap.data());
+    // setFeedbackForm(docSnap.data());
+    // //setLoading(false);
   };
 
   const handleFeedback = (id) => {
@@ -126,23 +75,23 @@ const EditManager = () => {
 
   const handleResponse = async (e) => {
     e.preventDefault();
-    let payload = {
-      response: feedbackForm?.response,
-      responderId: managerProfile?.id,
-      status: "answered",
-      updatedAt: serverTimestamp(),
-    };
-    //update feedback
-    await ProjectDataService.updateFeedback(feedbackId, payload);
-    //add feedback count to manager
-    if (feedbackForm?.status !== "answered") {
-      await ProjectDataService.updateManager(managerProfile?.id, {
-        feedbacksAdded: managerProfile?.feedbacksAdded + 1,
-        lastFeedback: serverTimestamp(),
-      });
-    }
-    fetchFeedbacks();
-    setOpenModal(!openModal);
+    // let payload = {
+    //   response: feedbackForm?.response,
+    //   responderId: managerProfile?.id,
+    //   status: "answered",
+    //   updatedAt: serverTimestamp(),
+    // };
+    // //update feedback
+    // await ProjectDataService.updateFeedback(feedbackId, payload);
+    // //add feedback count to manager
+    // if (feedbackForm?.status !== "answered") {
+    //   await ProjectDataService.updateManager(managerProfile?.id, {
+    //     feedbacksAdded: managerProfile?.feedbacksAdded + 1,
+    //     lastFeedback: serverTimestamp(),
+    //   });
+    // }
+    // fetchFeedbacks();
+    // setOpenModal(!openModal);
   };
 
   const handleInputChange = (e) => {
@@ -165,24 +114,6 @@ const EditManager = () => {
       setOpenModal(false);
     }
   };
-  const handleImg = (e) => {
-    setFile(e.target.files[0]);
-  };
-
-  const handleUpload = async () => {
-    let url = ""; //await uploadFile(file);
-
-    setFormData((prevData) => ({
-      ...prevData,
-      image: url,
-    }));
-    setFile("");
-  };
-
-  const statusData = [
-    { id: 1, title: "Verified", link: true },
-    { id: 2, title: "unVerified", link: false },
-  ];
 
   const InputDataInfo = [
     {
@@ -196,21 +127,21 @@ const EditManager = () => {
       value: formData?.role,
       data: [
         { id: 1, label: "Admin", value: "admin" },
-        { id: 1, label: "Manager", value: "manager" },
+        { id: 1, label: "Staff", value: "staff" },
       ],
-      cancel: staffInfo?.role,
+      cancel: staffInfo?.staff?.role,
     },
     {
       id: 2,
-      title: "Nation",
-      placeholder: "Select Nation",
-      name: "nation",
+      title: "Status",
+      placeholder: "Select Status",
+      name: "status",
       select: true,
       onChange: handleInputChange,
-      dataLabel: formData?.nation,
-      value: formData?.nation,
-      data: nationData,
-      cancel: staffInfo?.nation,
+      dataLabel: formData?.status,
+      value: formData?.status,
+      data: statusData,
+      cancel: staffInfo?.staff?.status,
     },
   ];
   const userDataInfo = [
@@ -219,157 +150,119 @@ const EditManager = () => {
       title: "First Name",
       placeholder: "Input the FirstName",
       name: "firstName",
-      onChange: () => {},
-      dataLabel: userData?.firstName,
-      value: userData?.firstName,
-      cancel: userInfo?.firstName, //item?.license?.broker,
+      onChange: handleInputChange,
+      dataLabel: formData?.firstName,
+      value: formData?.firstName,
+      cancel: staffInfo?.staff?.firstName, //item?.license?.broker,
     },
     {
       id: 2,
       title: "Last Name",
       placeholder: "Input the Family Name",
       name: "lastName",
-      onChange: () => {},
-      dataLabel: userData?.lastName,
-      value: userData?.lastName,
-      cancel: userInfo?.lastName, // item?.license?.accountNumber,
+      onChange: handleInputChange,
+      dataLabel: formData?.lastName,
+      value: formData?.lastName,
+      cancel: staffInfo?.staff?.lastName,
     },
     {
       id: 3,
-      title: "Cell Number",
-      placeholder: "Input the Cell Number",
-      name: "cellPhone",
-      onChange: () => {},
-      dataLabel: userData?.cellPhone,
-      value: userData?.cellPhone,
-      cancel: userInfo?.cellPhone, // item?.license?.accountNumber,
+      title: "Phone Number",
+      placeholder: "Input the Phone Number",
+      name: "phoneNumber",
+      onChange: handleInputChange,
+      dataLabel: formData?.phoneNumber,
+      value: formData?.phoneNumber,
+      cancel: staffInfo?.staff?.phoneNumber,
     },
     {
       id: 4,
-      title: "Home Number",
-      placeholder: "Input the Home Number",
-      name: "homePhone",
-      onChange: () => {},
-      dataLabel: userData?.homePhone,
-      value: userData?.homePhone,
-      cancel: userInfo?.homePhone, // item?.license?.accountNumber,
+      title: "Email",
+      placeholder: "Input Valid Email",
+      name: "email",
+      onChange: handleInputChange,
+      dataLabel: formData?.email,
+      value: formData?.email,
+      cancel: staffInfo?.staff?.email,
     },
     {
       id: 5,
-      title: "Location",
-      placeholder: "Input Your Location",
+      title: "Address",
+      placeholder: "Input Valid Address",
       name: "address",
-      onChange: () => {},
-      dataLabel: userData?.location,
-      value: userData?.location,
-      cancel: userInfo?.location, // item?.license?.accountNumber,
+      onChange: handleInputChange,
+      dataLabel: formData?.address,
+      value: formData?.address,
+      cancel: staffInfo?.staff?.address,
     },
     {
       id: 6,
-      title: "Street",
-      placeholder: "Input Your Street",
-      name: "street",
-      onChange: () => {},
-      dataLabel: userData?.street,
-      value: userData?.street,
-      cancel: userInfo?.street, // item?.license?.accountNumber,
+      title: "City",
+      placeholder: "Input City",
+      name: "city",
+      onChange: handleInputChange,
+      dataLabel: formData?.city,
+      value: formData?.city,
+      cancel: staffInfo?.staff?.city,
     },
     {
       id: 7,
-      title: "Motel",
-      placeholder: "Input Your motel",
-      name: "town",
-      onChange: () => {},
-      dataLabel: userData?.motel,
-      value: userData?.motel,
-      cancel: userInfo?.motel, // item?.license?.accountNumber,
+      title: "State",
+      placeholder: "Input State",
+      name: "state",
+      onChange: handleInputChange,
+      dataLabel: formData?.state,
+      value: formData?.state,
+      cancel: staffInfo?.staff?.motel,
     },
     {
       id: 8,
-      title: "Indigenous ID",
-      placeholder: "Select Your indigenous ID",
-      name: "indigenousID",
-      onChange: () => {},
-      dataLabel: userData?.indigenousID,
-      value: userData?.indigenousID,
-      cancel: userInfo?.indigenousID, // item?.license?.accountNumber,
+      title: "Country",
+      placeholder: "Select Country",
+      name: "country",
+      onChange: handleInputChange,
+      dataLabel: formData?.coutry,
+      value: formData?.country,
+      cancel: staffInfo?.staff?.country,
+      select: true,
+      data: countryData,
     },
     {
       id: 9,
-      title: "Po Box",
-      placeholder: "Input the PO Box",
-      name: "poBox",
-      onChange: () => {},
-      dataLabel: userData?.poBox,
-      value: userData?.poBox,
-      cancel: userInfo?.poBox, // item?.license?.accountNumber,
+      title: "Status",
+      placeholder: "Select Status",
+      name: "status",
+      select: true,
+      data: statusData,
+      onChange: handleInputChange,
+      dataLabel: formData?.status,
+      value: formData?.status,
+      cancel: staffInfo?.staff?.status,
     },
     {
       id: 10,
-      title: "House Number",
-      placeholder: "Input the House Number",
-      name: "house",
-      onChange: () => {},
-      dataLabel: userData?.house,
-      value: userData?.house,
-      cancel: userInfo?.house, // item?.license?.accountNumber,
-    },
-    {
-      id: 11,
-      title: "Date of Birth",
-      placeholder: "Input Date of birth",
-      name: "dob",
-      onChange: () => {},
-      dataLabel: userData?.dob,
-      value: userData?.dob,
-      cancel: userInfo?.dob, // item?.license?.accountNumber,
-    },
-    {
-      id: 12,
-      title: "Treaty Card",
-      placeholder: "Treaty Card",
-      name: "treatyCard",
-      onChange: () => {},
-      dataLabel: userData?.treatyCard,
-      value: userData?.treatyCard,
-      cancel: userInfo?.treatyCard, // item?.license?.accountNumber,
-    },
-    {
-      id: 13,
-      title: "Reserve",
-      placeholder: "Reserve",
-      name: "reserve",
-      onChange: () => {},
-      dataLabel: userData?.reserve,
-      value: userData?.reserve,
-      cancel: userInfo?.reserve, // item?.license?.accountNumber,
-    },
-    {
-      id: 14,
-      title: "Preferred Name",
-      placeholder: "Input Preferred Name",
-      name: "preferName",
-      onChange: () => {},
-      dataLabel: userData?.preferName,
-      value: userData?.preferName,
-      cancel: userInfo?.preferName, // item?.license?.accountNumber,
+      title: "PO Box",
+      placeholder: "Input PO Box",
+      name: "poBox",
+      onChange: handleInputChange,
+      dataLabel: formData?.poBox,
+      value: formData?.poBox,
+      cancel: staffInfo?.staff?.poBox,
     },
   ];
 
   const handleDemote = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
-      await ProjectDataService.deleteManager(staffInfoId);
-
-      //change user profile from staff to user
-      await ProjectDataService.updateUser(staffInfo?.userId, { role: "user" });
-      await fetchManagers(dispatch, managerProfile);
-      await fetchUsers(dispatch, managerProfile);
-
-      toast.success("Staff demoted to User");
-      setLoading(false);
-      navigate("/");
+      // setLoading(true);
+      // await ProjectDataService.deleteManager(staffInfoId);
+      // //change user profile from staff to user
+      // await ProjectDataService.updateUser(staffInfo?.userId, { role: "user" });
+      // await fetchManagers(dispatch, managerProfile);
+      // await fetchUsers(dispatch, managerProfile);
+      // toast.success("Staff demoted to User");
+      // setLoading(false);
+      // navigate("/");
     } catch (error) {
       toast.error(
         error?.message ? error?.message : "Error occured, contact support"
@@ -380,24 +273,24 @@ const EditManager = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (formData?.nation === "") {
-        toast.error("Select nation");
-        return;
-      }
-      if (formData?.role === "") {
-        toast.error("Select role");
-        return;
-      }
-      let payload = {
-        nation: formData?.nation,
-        role: formData?.role,
-        updatedAt: serverTimestamp(),
-      };
+      // if (formData?.nation === "") {
+      //   toast.error("Select nation");
+      //   return;
+      // }
+      // if (formData?.role === "") {
+      //   toast.error("Select role");
+      //   return;
+      // }
+      // let payload = {
+      //   nation: formData?.nation,
+      //   role: formData?.role,
+      //   updatedAt: serverTimestamp(),
+      // };
 
-      await ProjectDataService.updateManager(staffId, payload);
-      GetStaff(staffId, setLoading, setStaffInfo);
+      // await ProjectDataService.updateManager(staffId, payload);
+      // GetStaff(staffId, setLoading, setStaffInfo);
 
-      fetchUsers(dispatch, managerProfile);
+      // fetchUsers(dispatch, managerProfile);
       toast.success("Manager Updated Success");
     } catch (error) {
       toast.error(
@@ -408,7 +301,7 @@ const EditManager = () => {
   };
 
   return (
-    <div className="container" onClick={closeModal}>
+    <div className="containerr" onClick={closeModal}>
       {loading ? (
         <div>
           <LoadingBox circle={true} />
@@ -417,9 +310,9 @@ const EditManager = () => {
         <div>
           <div>
             <h2 className="page-header">
-              {staffInfo?.userId === myProfile?.uid
+              {staffInfo?.staff?.id === myProfile?.id
                 ? "My"
-                : staffInfo?.name + "'s"}{" "}
+                : staffInfo?.staff?.firstName + "'s"}{" "}
               Profile
             </h2>
           </div>
@@ -439,21 +332,21 @@ const EditManager = () => {
               {hideProfile && (
                 <>
                   <div className="mbottom">
-                    {staffInfo?.createdAt ? (
+                    {staffInfo?.staff?.createdAt ? (
                       <>
                         created on the{" "}
                         <span className="blue">
-                          {convertTimeStamp(staffInfo?.createdAt)}{" "}
+                          {convertTimeStamp(staffInfo?.staff?.createdAt)}{" "}
                         </span>{" "}
                       </>
                     ) : (
                       "No records yet "
                     )}
-                    {staffInfo?.updatedAt ? (
+                    {staffInfo?.staff?.updatedAt ? (
                       <>
                         and was last updated at{" "}
                         <span className="blue">
-                          {convertTimeStamp(staffInfo?.updatedAt)}
+                          {convertTimeStamp(staffInfo?.staff?.updatedAt)}
                         </span>{" "}
                       </>
                     ) : (
@@ -462,7 +355,7 @@ const EditManager = () => {
                   </div>
                   {editManager ? (
                     <div className="row1">
-                      {InputDataInfo.map((val) => (
+                      {userDataInfo.map((val) => (
                         <div className="coll-6" key={val.id}>
                           <CompleteInput
                             title={val.title}
@@ -482,12 +375,12 @@ const EditManager = () => {
                         </div>
                       ))}
 
-                      <div className="">
+                      <div className="coll-12">
                         <span
                           className="editProfile"
                           onClick={() => setEditManager(!editManager)}
                         >
-                          Click Here to Cancel Edit Mode (Manager)
+                          Click Here to Cancel Edit Mode (Staff)
                         </span>
                         <div className="modalFooter">
                           <button
@@ -495,14 +388,14 @@ const EditManager = () => {
                             disabled={loading}
                             onClick={handleSubmit}
                           >
-                            Update Profile
+                            Update
                           </button>
                           <button
                             className="modalFooterBtn2"
                             disabled={loading}
-                            onClick={handleDemote}
+                            onClick={() => setEditManager(!editManager)}
                           >
-                            Demote to User
+                            Close
                           </button>
                         </div>
                       </div>
@@ -511,69 +404,81 @@ const EditManager = () => {
                     <div className="mainBackground">
                       <QuestionAns
                         question={"Staff Name: "}
-                        ans={staffInfo?.name}
-                      />
-                      <QuestionAns
-                        question={"Staff Role: "}
-                        ans={staffInfo?.role}
-                      />
-                      <QuestionAns
-                        question={"Staff Nation: "}
-                        ans={staffInfo?.nation}
-                      />
-                      <QuestionAns
-                        question={"Total Feedbacks responded: "}
-                        ans={staffInfo?.feedbacksAdded}
-                      />
-                      <QuestionAns
-                        question={"Total Events created: "}
-                        ans={staffInfo?.eventsAdded}
-                      />
-                      <QuestionAns
-                        question={"Total Users added: "}
-                        ans={staffInfo?.usersAdded}
-                      />
-                      <QuestionAns
-                        question={"Total Users added: "}
-                        ans={staffInfo?.usersAdded}
-                      />
-                      {managerProfile?.role === "superAdmin" ||
-                        (managerProfile?.role === "admin" && (
-                          <QuestionAns
-                            question={"Total Managers added: "}
-                            ans={staffInfo?.managersAdded}
-                          />
-                        ))}
-                      <QuestionAns
-                        question={"Last feedback response: "}
                         ans={
-                          staffInfo?.lastFeedback === ""
-                            ? "No feedback responded yet"
-                            : convertTimeStamp(staffInfo?.lastFeedback)
+                          staffInfo?.staff?.firstName +
+                          " " +
+                          staffInfo?.staff?.lastName
                         }
                       />
                       <QuestionAns
-                        question={"Last event created: "}
+                        question={"Staff Role: "}
                         ans={
-                          staffInfo?.lastEvent == ""
-                            ? "No event created"
-                            : convertTimeStamp(staffInfo?.lastEvent)
+                          staffInfo?.staff?.role === ""
+                            ? "No Country filled yet"
+                            : staffInfo?.staff?.role
+                        }
+                      />
+                      <QuestionAns
+                        question={"Staff Email: "}
+                        ans={
+                          staffInfo?.staff?.email === ""
+                            ? "No Country filled yet"
+                            : staffInfo?.staff?.email
+                        }
+                      />
+                      <QuestionAns
+                        question={"Staff Phone: "}
+                        ans={
+                          staffInfo?.staff?.phoneNumber === ""
+                            ? "No Country filled yet"
+                            : staffInfo?.staff?.phoneNumber
+                        }
+                      />
+                      <QuestionAns
+                        question={"Staff Address: "}
+                        ans={
+                          staffInfo?.staff?.address === ""
+                            ? "No Country filled yet"
+                            : staffInfo?.staff?.address
+                        }
+                      />
+                      <QuestionAns
+                        question={"Staff City: "}
+                        ans={
+                          staffInfo?.staff?.city === ""
+                            ? "No Country filled yet"
+                            : staffInfo?.staff?.city
+                        }
+                      />
+                      <QuestionAns
+                        question={"Staff State: "}
+                        ans={
+                          staffInfo?.staff?.state === ""
+                            ? "No Country filled yet"
+                            : staffInfo?.staff?.state
+                        }
+                      />
+                      <QuestionAns
+                        question={"Staff Country: "}
+                        ans={
+                          staffInfo?.staff?.country === ""
+                            ? "No Country filled yet"
+                            : staffInfo?.staff?.country
                         }
                       />
                       <QuestionAns
                         question={"Staff Created At: "}
                         ans={
-                          staffInfo?.createdAt === ""
+                          staffInfo?.staff?.createdAt === ""
                             ? "No info"
-                            : convertTimeStamp(staffInfo?.createdAt)
+                            : convertTimeStamp(staffInfo?.staff?.createdAt)
                         }
                       />
-
                       <span
                         className="editProfile"
                         onClick={() => setEditManager(!editManager)}
                       >
-                        Click Here to Edit Manager
+                        Click Here to Edit Staff
                       </span>
                     </div>
                   )}
@@ -584,7 +489,7 @@ const EditManager = () => {
                 className="info-header-alt"
                 onClick={() => setHideUser(!hideUser)}
               >
-                <h3>User Information</h3>
+                <h3>Staff Information</h3>
                 {hideUser ? (
                   <i className="bx bxs-caret-up-circle icon"></i>
                 ) : (
@@ -593,34 +498,15 @@ const EditManager = () => {
               </div>
               {hideUser &&
                 (userLoading ? (
-                  <>Loading, Please wait</>
+                  <>Loading other records, Please wait</>
                 ) : (
                   <>
                     <div className="mbottom">
-                      {userInfo?.createdAt ? (
-                        <>
-                          created on the{" "}
-                          <span className="blue">
-                            {convertTimeStamp(userInfo?.createdAt)}{" "}
-                          </span>{" "}
-                        </>
-                      ) : (
-                        "No records yet "
-                      )}
-                      {userInfo?.updatedAt ? (
-                        <>
-                          and was last updated at{" "}
-                          <span className="blue">
-                            {convertTimeStamp(userInfo?.updatedAt)}
-                          </span>{" "}
-                        </>
-                      ) : (
-                        "and No records update yet"
-                      )}
+                      Pre-recorded staff information
                     </div>
                     {editUser ? (
                       <div className="row1">
-                        {userDataInfo.map((val) => (
+                        {InputDataInfo.map((val) => (
                           <div className="coll-6" key={val.id}>
                             <CompleteInput
                               title={val.title}
@@ -639,292 +525,79 @@ const EditManager = () => {
                             />
                           </div>
                         ))}
-
-                        <span
-                          className="editProfile"
-                          onClick={() => setEditUser(!editUser)}
-                        >
-                          Click Here to Cancel Edit Mode
-                        </span>
+                        <div className="coll-12">
+                          <span
+                            className="editProfile"
+                            onClick={() => setEditUser(!editUser)}
+                          >
+                            Click Here to Cancel Edit Mode
+                          </span>
+                          <div className="modalFooter">
+                            <button
+                              className="modalFooterBtn1"
+                              disabled={loading}
+                              onClick={handleDemote}
+                            >
+                              {formData?.role === "staff"
+                                ? "Demote"
+                                : "Promote"}
+                            </button>
+                            <button
+                              className="modalFooterBtn2"
+                              disabled={loading}
+                              onClick={() => setEditUser(!editUser)}
+                            >
+                              Close
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     ) : (
                       <div className="mainBackground">
                         <QuestionAns
-                          question={"User Name: "}
-                          ans={userInfo?.firstName + " " + userInfo?.lastName}
-                        />
-                        <QuestionAns
-                          question={"User Role: "}
-                          ans={userInfo?.role}
-                        />
-                        <QuestionAns
-                          question={"User Nation: "}
-                          ans={userInfo?.nation}
-                        />
-
-                        <QuestionAns
-                          question={"Cell Phone: "}
+                          question={"Total Staff added: "}
                           ans={
-                            userInfo?.phone1 === ""
-                              ? "No Cell filled yet"
-                              : userInfo?.phone1
+                            !staffInfo?.staff?.staffsAdded
+                              ? 0
+                              : staffInfo?.staff?.staffsAdded
                           }
                         />
                         <QuestionAns
-                          question={"Street: "}
+                          question={"Total Packages created: "}
                           ans={
-                            userInfo?.street === ""
-                              ? "No Street filled yet"
-                              : userInfo?.street
+                            !staffInfo?.staff?.packagesAdded
+                              ? 0
+                              : staffInfo?.staff?.packagesAdded
                           }
                         />
                         <QuestionAns
-                          question={"Town: "}
+                          question={"Total Users added: "}
                           ans={
-                            userInfo?.town === ""
-                              ? "No Town filled yet"
-                              : userInfo?.town
-                          }
-                        />
-                        <QuestionAns
-                          question={"City: "}
-                          ans={
-                            userInfo?.city === ""
-                              ? "No City filled yet"
-                              : userInfo?.city
-                          }
-                        />
-                        <QuestionAns
-                          question={"Country: "}
-                          ans={
-                            userInfo?.country === ""
-                              ? "No Country filled yet"
-                              : userInfo?.country
-                          }
-                        />
-                        <QuestionAns
-                          question={"Tribal Council: "}
-                          ans={
-                            userInfo?.tribalCouncil === ""
-                              ? "Not filled yet"
-                              : userInfo?.tribalCouncil
-                          }
-                        />
-                        <QuestionAns
-                          question={"Indegenous ID: "}
-                          ans={
-                            userInfo?.indigenousId === ""
-                              ? "Not filled yet"
-                              : userInfo?.indigenousId
-                          }
-                        />
-                        <QuestionAns
-                          question={"Verified User Account: "}
-                          ans={
-                            userInfo?.isVerified === "false" ||
-                            userInfo?.isVerified === false
-                              ? "Not verified"
-                              : "Verified"
-                          }
-                        />
-                        <QuestionAns
-                          question={"User Created At: "}
-                          ans={
-                            userInfo?.createdAt === ""
-                              ? "No info"
-                              : convertTimeStamp(userInfo?.createdAt)
+                            !staffInfo?.staff?.usersAdded
+                              ? 0
+                              : staffInfo?.staff?.usersAdded
                           }
                         />
                         <span
                           className="editProfile"
                           onClick={() => setEditUser(!editUser)}
                         >
-                          Click Here to Edit User
+                          Click Here to{" "}
+                          {staffInfo?.staff?.role === "staff"
+                            ? "Promote to Admin"
+                            : "Demote to Staff"}{" "}
                         </span>
                       </div>
                     )}
                   </>
                 ))}
-              {/*
-              <div
-                className="info-header-alt"
-                onClick={() => setHideFamily(!hideFamily)}
-              >
-                <h3>Family Information</h3>
-                {hideFamily ? (
-                  <i className="bx bxs-caret-up-circle icon"></i>
-                ) : (
-                  <i className="bx bxs-caret-down-circle icon"></i>
-                )}
-              </div>
-              {hideFamily && (
-                <>
-                  <div className="mbottom">
-                    {familyInfo?.createdAt ? (
-                      <>
-                        created on the{" "}
-                        <span className="blue">
-                          {convertTimeStamp(familyInfo?.createdAt)}{" "}
-                        </span>{" "}
-                      </>
-                    ) : (
-                      "No records yet "
-                    )}
-                    {familyInfo?.updatedAt ? (
-                      <>
-                        and was last updated at{" "}
-                        <span className="blue">
-                          {convertTimeStamp(familyInfo?.updatedAt)}
-                        </span>{" "}
-                      </>
-                    ) : (
-                      "and No records update yet"
-                    )}
-                  </div>
-                  <div className="mainBackground">
-                    <QuestionAns
-                      question={"Revamping this section"}
-                      ans={"Please wait"}
-                    />
-                  </div>
-                </>
-              )}
-
-              <div
-                className="info-header-alt"
-                onClick={() => setHideSupport(!hideSupport)}
-              >
-                <h3>Support Information</h3>
-                {hideSupport ? (
-                  <i className="bx bxs-caret-up-circle icon"></i>
-                ) : (
-                  <i className="bx bxs-caret-down-circle icon"></i>
-                )}
-              </div>
-              {hideSupport && (
-                <>
-                  <div className="mbottom">
-                    {supportInfo?.createdAt ? (
-                      <>
-                        created on the{" "}
-                        <span className="blue">
-                          {convertTimeStamp(supportInfo?.createdAt)}{" "}
-                        </span>{" "}
-                      </>
-                    ) : (
-                      "No records yet "
-                    )}
-                    {supportInfo?.updatedAt ? (
-                      <>
-                        and was last updated at{" "}
-                        <span className="blue">
-                          {convertTimeStamp(supportInfo?.updatedAt)}
-                        </span>{" "}
-                      </>
-                    ) : (
-                      "and No records update yet"
-                    )}
-                  </div>
-
-                  <div className="mainBackground">
-                    <QuestionAns
-                      question={
-                        "Is your home privately insured for content coverage?"
-                      }
-                      ans={supportData?.insured}
-                    />
-                    <QuestionAns
-                      question={"Damage Classification?"}
-                      ans={supportData?.damage}
-                    />
-                    <QuestionAns
-                      question={"Event Type?"}
-                      ans={supportData?.eventType}
-                    />
-                    <QuestionAns
-                      question={
-                        "Are any of the following support required? Alternative Accomodations?"
-                      }
-                      ans={supportData?.altAccomodation}
-                    />
-                    <QuestionAns
-                      question={
-                        "Are any of the following support required? Assistance with meals?"
-                      }
-                      ans={supportData?.asstMeals}
-                    />
-                    <QuestionAns
-                      question={
-                        "Are any of the following support required? Assistance with clothing and toiletries?"
-                      }
-                      ans={supportData?.asstCloths}
-                    />
-                    <QuestionAns
-                      question={
-                        "Did you drive your own vehicle out of the evacuation, travel by bus, or catch a ride with friends/ family (other)?"
-                      }
-                      ans={supportData?.driveVehicle}
-                    />
-                    <QuestionAns
-                      question={
-                        "Do you have your prescription medication? ( if no, please provide the name of your regular pharmacy)"
-                      }
-                      ans={supportData?.pressMedication}
-                    />
-                    <QuestionAns
-                      question={
-                        "Do you require personal mobility equipment/devices?"
-                      }
-                      ans={supportData?.mobileEquipment}
-                    />
-                    <QuestionAns
-                      question={
-                        "Do you use a visual aid( glasses) or hearing aid?"
-                      }
-                      ans={supportData?.visualHearingAids}
-                    />
-                    <QuestionAns
-                      question={"Do you have those aids with you?"}
-                      ans={supportData?.aidPresent}
-                    />
-                    <QuestionAns
-                      question={
-                        "Does any one in your household need additional support to cope emotionally with disaster impacts?( i.e. support groups/ counselling)"
-                      }
-                      ans={supportData?.additionalSupport}
-                    />
-                    <QuestionAns
-                      question={
-                        "What service(s) may help the household/individual?"
-                      }
-                      ans={supportData?.service}
-                    />
-                    <QuestionAns
-                      question={
-                        "Can other members of your household who inquire about you be given your contact information?"
-                      }
-                      ans={supportData?.contactConsent}
-                    />
-                    <QuestionAns
-                      question={"How would like to receive the support?"}
-                      ans={supportData?.supportType}
-                    />
-                    <QuestionAns
-                      question={
-                        "What is your " + supportData?.supportType + " id"
-                      }
-                      ans={supportData?.supportId}
-                    />
-                  </div>
-                </>
-              )}*/}
             </div>
             <div className="coll-6">
-              <FeedBackBystaffId
+              {/* <FeedBackBystaffId
                 feedbacks={feedbacks}
                 handleFeedback={handleFeedback}
                 loadingFeedback={loadingFeedback}
-              />
+              /> */}
             </div>
             {/*addRevLoaded && <LoadingBox circle/> */}
           </div>
@@ -939,11 +612,11 @@ const EditManager = () => {
             >
               <div className="flexx">
                 <span className="desc">
-                  created at {convertTimeStamp(feedbackData?.createdAt)},
-                  {feedbackData?.updatedAt === ""
+                  {/* created at {convertTimeStamp(feedbackData?.createdAt)}, */}
+                  {/* {feedbackData?.updatedAt === ""
                     ? " No response yet"
                     : " responded at " +
-                      convertTimeStamp(feedbackData?.updatedAt)}
+                      convertTimeStamp(feedbackData?.updatedAt)} */}
                 </span>
                 <div className="row1">
                   <div className="coll-6">

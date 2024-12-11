@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, LoadingBox, ModalOptions } from "../components";
 import Header from "../components/header";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { convertNormalTime } from "../utils/others";
+import { convertNormalTime, convertTimeStamp } from "../utils/others";
+import { toast } from "react-toastify";
 
 function Home() {
   const [trackerValue, setTrackerValue] = useState("");
@@ -15,50 +16,70 @@ function Home() {
   const navigate = useNavigate();
 
   const handleOption = async () => {
-    setError("");
-    setOpenModal(true);
-    setLoading(true);
-    let config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `https://api-eu.dhl.com/track/shipments?trackingNumber=${trackerValue}`,
-      // url: `https://api-test.dhl.com/track/shipments?trackingNumber=${trackerValue}`,
-      //url: `https://api.dhl.com/dgff/transportation/shipment-tracking?trackingNumber=${trackerValue}`,
-      headers: {
-        "content-type": "application/json",
-        "DHL-API-Key": "MzijpufWBztmGXbDlKjUB0Z2FbiGKg1g",
-      },
-    };
     try {
-      let cards = axios(config)
-        .then((response) => {
-          setTrackeData(response?.data);
-          setShipments(response?.data?.shipments);
-          setLoading(false);
-          return response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-          setError(error?.message);
-          setLoading(false);
-        });
+      if (trackerValue) {
+        setLoading(true);
+        setError("");
+        setOpenModal(true);
+        const trackedItems = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/track/${trackerValue}`
+        );
+        if (trackedItems?.data?.data) {
+          setTrackeData(trackedItems?.data?.item);
+          setShipments(trackedItems?.data?.data?.shipments);
 
-      let result = await cards;
-      console.log(result);
+          setLoading(false);
+          toast.success("Goods tracked successfully");
+        } else {
+          setTrackeData(trackedItems?.data?.item);
+          setLoading(false);
+          toast.success("Goods tracked successfully");
+        }
+      } else {
+        toast.error("Input Tracking number");
+      }
     } catch (error) {
       setError(error?.message);
       setLoading(false);
+      toast.error("Error occured, retry again");
     }
-    // axios
-    //   .request(config)
-    //   .then((response) => {
-    //  //   console.log(JSON.stringify("response?.data", response?.data));
-    //     console.log(JSON.stringify("response?.data", response));
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
   };
+  // const handleOption1 = async () => {
+  //   setError("");
+  //   setOpenModal(true);
+  //   setLoading(true);
+  //   let config = {
+  //     method: "get",
+  //     maxBodyLength: Infinity,
+  //     url: `https://api-eu.dhl.com/track/shipments?trackingNumber=${trackerValue}`,
+  //     // url: `https://api-test.dhl.com/track/shipments?trackingNumber=${trackerValue}`,
+  //     //url: `https://api.dhl.com/dgff/transportation/shipment-tracking?trackingNumber=${trackerValue}`,
+  //     headers: {
+  //       "content-type": "application/json",
+  //       "DHL-API-Key": "MzijpufWBztmGXbDlKjUB0Z2FbiGKg1g",
+  //     },
+  //   };
+  //   try {
+  //     let cards = axios(config)
+  //       .then((response) => {
+  //         setTrackeData(response?.data);
+  //         setShipments(response?.data?.shipments);
+  //         setLoading(false);
+  //         return response.data;
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //         setError(error?.message);
+  //         setLoading(false);
+  //       });
+
+  //     let result = await cards;
+  //     console.log(result);
+  //   } catch (error) {
+  //     setError(error?.message);
+  //     setLoading(false);
+  //   }
+  // };
   const handleCancel = () => {
     setOpenModal(!openModal);
   };
@@ -117,7 +138,7 @@ function Home() {
                           </p>
                         </div>
                         <div className="banner__content-cta">
-                          <Link to="/new" className="btn btn--primary">
+                          <Link to="/dashboard" className="btn btn--primary">
                             Get Started
                           </Link>
                         </div>
@@ -132,6 +153,7 @@ function Home() {
             </div>
             {openModal && (
               <ModalOptions
+                top={380}
                 file={trackerValue}
                 // title={"Coral Tracking Service"}
                 handleCancel={handleCancel}
@@ -166,34 +188,66 @@ function Home() {
                       <span className="error">{error}</span>
                     ) : (
                       <div>
-                        <TrackerItem
-                          title={"Status"}
-                          trackerItem={
-                            shipments[0]?.status?.statusCode === "unknown"
-                              ? "Processing"
-                              : shipments[0]?.status?.statusCode
-                          }
-                        />
-                        <TrackerItem
-                          title={"Description"}
-                          trackerItem={shipments[0]?.events[0]?.description}
-                        />
-                        <TrackerItem
-                          title={"Location"}
-                          trackerItem={
-                            shipments[0]?.events[0]?.location?.address
-                              ?.addressLocality +
-                            ", " +
-                            shipments[0]?.events[0]?.location?.address
-                              ?.countryCode
-                          }
-                        />
-                        <TrackerItem
-                          title={"Delivery Time"}
-                          trackerItem={convertNormalTime(
-                            shipments[0]?.status?.timestamp
-                          )}
-                        />
+                        {!shipments ? (
+                          <div>
+                            <TrackerItem
+                              title={"Status"}
+                              trackerItem={
+                                shipments[0]?.status?.statusCode ===
+                                  "unknown" || !shipments[0]?.status?.statusCode
+                                  ? "Processing"
+                                  : shipments[0]?.status?.statusCode
+                              }
+                            />
+                            <TrackerItem
+                              title={"Description"}
+                              trackerItem={shipments[0]?.events[0]?.description}
+                            />
+                            <TrackerItem
+                              title={"Location"}
+                              trackerItem={
+                                shipments[0]?.events[0]?.location?.address
+                                  ?.addressLocality +
+                                ", " +
+                                shipments[0]?.events[0]?.location?.address
+                                  ?.countryCode
+                              }
+                            />
+                            <TrackerItem
+                              title={"Delivery Time"}
+                              trackerItem={convertNormalTime(
+                                shipments[0]?.status?.timestamp
+                              )}
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <TrackerItem
+                              title={"Status"}
+                              trackerItem={trackData?.status}
+                            />
+                            <TrackerItem
+                              title={"Description"}
+                              trackerItem={trackData?.description}
+                            />
+                            <TrackerItem
+                              title={"Location"}
+                              trackerItem={
+                                trackData?.address
+                                  ? trackData?.address +
+                                    ", " +
+                                    trackData?.country
+                                  : "Packaging House"
+                              }
+                            />
+                            <TrackerItem
+                              title={"Date"}
+                              trackerItem={convertTimeStamp(
+                                trackData?.createdAt
+                              )}
+                            />
+                          </div>
+                        )}
                       </div>
                     )}
                     <div className="modalFooter">
@@ -292,11 +346,11 @@ function Home() {
               className="slide-btn prev-ban-one"
             >
               {/* <i className="icon-left-arrow"></i> */}
-              <i class="bx bx-right-arrow-alt"></i>
+              <i className="bx bx-right-arrow-alt"></i>
             </button>
             <button aria-label="next item" className="slide-btn next-ban-one">
               {/* <i className="icon-right-arrow"></i> */}
-              <i class="bx bx-left-arrow-alt"></i>
+              <i className="bx bx-left-arrow-alt"></i>
             </button>
           </div>
         </section>
@@ -505,7 +559,7 @@ function Home() {
                     <div className="col-12 col-lg-8">
                       <div className="delivery__content gFadeBottom">
                         <div className="delivery__content-meta">
-                          <h6 className="title-anim">Project Estimateing</h6>
+                          <h6 className="title-anim">Project Estimating</h6>
                           <h2 className="title-anim">Request a quick quotes</h2>
                         </div>
                         <div className="delivery__content-form">

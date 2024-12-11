@@ -14,3 +14,4 @@ export { default as Table } from "./table/Table";
 export { default as Topnav } from "./topnav/Topnav";
 export { default as ThemeMenu } from "./ThemeMenu/ThemeMenu";
 export { default as Header } from "./header";
+export { default as QuestionAns } from "./QuestionAns";

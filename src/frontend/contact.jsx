@@ -41,7 +41,7 @@ function Contact() {
                                 <div className="col-12 col-lg-8">
                                     <div className="delivery__content gFadeBottom">
                                         <div className="delivery__content-meta">
-                                            <h6 className="title-anim">Project Estimateing</h6>
+                                            <h6 className="title-anim">Project Estimating</h6>
                                             <h2 className="title-anim">Request a quick quotes</h2>
                                         </div>
                                         <div className="delivery__content-form">

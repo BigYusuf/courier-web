@@ -1,22 +1,16 @@
 import React from "react";
 import "./topnav.css";
 import { Link, useNavigate } from "react-router-dom";
-import { signOut } from "firebase/auth";
+import { useDispatch, useSelector } from "react-redux";
 
 import Dropdown from "../dropdown/Dropdown";
 import ThemeMenu from "../ThemeMenu/ThemeMenu";
 import user_menu from "../../assets/JsonData/user_menus.json";
-import { useDispatch, useSelector } from "react-redux";
-import { auth } from "../../firebase";
-import { getAllUsers, logOut } from "../../redux/slice/auth";
+// import {  logOut } from "../../redux/slice/auth";
 import { abrevateName } from "../../utils/others";
 import logo from "../../assets/images/logo.png";
-import {
-  getFeedbacks,
-  getFeedbacksByNation,
-} from "../../redux/slice/feedbacks";
-import { getEvents, getEventsByNation } from "../../redux/slice/events";
 import { setActiveSideBar } from "../../redux/slice/sidebar";
+import { logOut } from "../../redux/slice/auth/authSlice";
 
 const renderUserToggle = (user) => (
   <div className="topnav__right-user">
@@ -50,14 +44,8 @@ const Topnav = () => {
     const handleClick = async () => {
       if (item?.action === "logout") {
         dispatch(logOut());
-        await signOut(auth);
-        dispatch(getAllUsers([]));
-        dispatch(getFeedbacks([]));
-        dispatch(getFeedbacksByNation([]));
-        dispatch(getEvents([]));
-        dispatch(getEventsByNation([]));
 
-        navigate("/login");
+        navigate("/");
       }
     };
     return (
@@ -93,6 +81,7 @@ const Topnav = () => {
             renderFooter={() => <Link to="/">View All</Link>}
           />
         </div> */}
+
         <div className="topnav__right-item">
           <ThemeMenu />
         </div>

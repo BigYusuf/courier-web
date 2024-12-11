@@ -8,6 +8,7 @@ import MyDatePicker from "../datePicker";
 
 const CompleteInput = ({
   removeTag,
+  country,
   handleUpload,
   removeImage,
   handleDrop,
@@ -62,7 +63,6 @@ const CompleteInput = ({
     }
   };
 
-
   const handleActive = () => {
     setActive(!active);
   };
@@ -115,8 +115,11 @@ const CompleteInput = ({
                 >
                   <option value=""></option>
                   {data?.map((item) => (
-                    <option key={item.id} value={item?.value || item?.link}>
-                      {item?.label || item?.title}
+                    <option
+                      key={item.id}
+                      value={item?.value || item?.link || item?.label}
+                    >
+                      {item?.label || item?.title || item?.country}
                     </option>
                   ))}
                 </select>
@@ -134,6 +137,21 @@ const CompleteInput = ({
                   </>
                 )}
               </>
+            ) : country ? (
+              <select
+                type="text"
+                name={name}
+                value={value}
+                onChange={onChange}
+                className="input"
+              >
+                <option value=""></option>
+                {data?.map((item) => (
+                  <option key={item.iso2} value={item?.label}>
+                    {item?.label}
+                  </option>
+                ))}
+              </select>
             ) : features ? (
               <div className="tags-input-container">
                 {data?.map((tag) => {

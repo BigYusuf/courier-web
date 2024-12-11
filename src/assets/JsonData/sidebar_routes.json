@@ -1,7 +1,7 @@
 [
     {
         "display_name": "Dashboard",
-        "route": "/",
+        "route": "/dashboard",
         "icon": "bx bx-category-alt"
     },
     {
@@ -10,23 +10,23 @@
         "icon": "bx bx-user-pin"
     },
     {
-        "display_name": "Feedbacks",
-        "route": "/feedbacks",
+        "display_name": "Packages",
+        "route": "/mypackages",
         "icon": "bx bx-package"
     },
     {
-        "display_name": "Events",
-        "route": "/events",
+        "display_name": "Orders",
+        "route": "/orders",
         "icon": "bx bx-cart"
     },
     {
         "display_name": "staffs",
-        "route": "/managers",
+        "route": "/staffs",
         "icon": "bx bx-list-ol"
     },
     {
-        "display_name": "evaluation",
-        "route": "/evaluation",
+        "display_name": "Messages",
+        "route": "/messages",
         "icon": "bx bx-chart"
     }
 ]

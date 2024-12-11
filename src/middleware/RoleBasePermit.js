@@ -1,15 +1,12 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useSelector } from "react-redux"
-
-import { selectCurrentUser } from "../redux/slice/authSlice";
-// import { selectCurrentUser } from "../state/slice/authSlice";
+import { useSelector } from "react-redux";
 
 function RolePermit({ Component }) {
+  const myProfile = useSelector((state) => state?.auth?.profile);
 
-  const user = useSelector(selectCurrentUser)
-  if (user.role ==="user") {
-    return <Navigate to="/" />;
+  if (myProfile?.role !== "staff" && myProfile?.role !== "admin") {
+    return <Navigate to="/dashboard" />;
   }
   return <Component />;
 }

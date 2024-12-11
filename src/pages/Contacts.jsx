@@ -1,93 +1,98 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
-import { Badge, LoadingBox, CompleteInput, ModalOptions } from "../components";
-import { useGetUsersQuery } from "../redux/slice/user";
+import { LoadingBox, CompleteInput, ModalOptions } from "../components";
+import {
+  useAddContactMutation,
+  useGetContactsQuery,
+} from "../redux/slice/contact";
+import { countryData } from "../data/countries";
 
-const customerTableHead = ["", "name", "email", "country", "status", "action"];
+const customerTableHead = ["", "name", "email", "state", "country", "action"];
 
-const Customers = () => {
+const Contacts = () => {
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [selectedUser, setSelectedUser] = useState({});
-  //const [allUsers, setAllUsers] = useState([]);
-  const [role, setRole] = useState("");
-  const [nation, setNation] = useState("");
+  // const [selectedUser, setSelectedUser] = useState({});
+
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const { data: customerData, isLoading: userLoading } = useGetUsersQuery();
+  const {
+    data: contactData,
+    isFetching: contactLoading,
+    refetch,
+  } = useGetContactsQuery();
 
-  // console.log(customerData?.data);
+  const [addContact] = useAddContactMutation();
+  const initialValues = {
+    name: "",
+    email: "",
+    country: "",
+    continent: "",
+    address: "",
+    state: "",
+    city: "",
+    phone: "",
+  };
+  const [formData, setFormData] = useState(initialValues);
 
+  const handleAddContact = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+
+      let payload = {
+        name: formData?.name,
+        email: formData?.email,
+        city: formData?.city,
+        state: formData?.state,
+        country: formData?.country,
+        continent: formData?.continent,
+        phone: formData?.phone,
+        address: formData?.address,
+        status: "active",
+      };
+      if (!formData?.name) {
+        toast.error("Contact Name/ Username is required");
+        return;
+      }
+      // console.log(payload);
+      const addcont = await addContact(payload).unwrap();
+
+      if (addcont?.success) {
+        refetch();
+        setFormData(initialValues);
+        setOpenModal(!openModal);
+        setLoading(false);
+        toast.success("Contact Created Success");
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.message ? error?.message : "Error occured");
+      setLoading(false);
+    }
+  };
+  const handleInputContactChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
   const closeModal = () => {
     if (openModal) {
       setOpenModal(false);
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      // if (role === "") {
-      //   toast.error("Role is required");
-      //   setLoading(false);
-      //   return;
-      // } else if (nation === "") {
-      //   toast.error("Nation is required");
-      //   setLoading(false);
-      //   return;
-      // }
-      // //create new Manager
-      // const newManager = await ProjectDataService.addManager({
-      //   name: selectedUser?.firstName + " " + selectedUser?.lastName,
-      //   userId: selectedUser?.id,
-      //   nation: nation,
-      //   role: role,
-      //   lastEvent: "",
-      //   lastFeedback: "",
-      //   feedbacksAdded: 0,
-      //   eventsAdded: 0,
-      //   usersAdded: 0,
-      //   managersAdded: 0,
-      //   createdBy: managerProfile?.id,
-      //   createdAt: serverTimestamp(),
-      //   updatedAt: "",
-      // });
-      // //update user role to staff
-      // if (newManager) {
-      //   await ProjectDataService.updateUser(selectedUser?.id, {
-      //     role: "staff",
-      //     updatedAt: serverTimestamp(),
-      //   });
-      // }
-      // if (newManager) {
-      //   //update creator profile
-      //   await ProjectDataService.updateManager(managerProfile?.id, {
-      //     managersAdded: managerProfile?.managersAdded + 1,
-      //     updatedAt: serverTimestamp(),
-      //   });
-      // }
-      // setLoading(false);
-      // setNation("");
-      // setRole("");
-      // setOpenModal(!openModal);
-      // toast.success("New " + role + " added");
-    } catch (error) {
-      setNation("");
-      setRole("");
-      toast.error(
-        error?.message ? error?.message : "Error occured, contact support"
-      );
-      setLoading(false);
-      setOpenModal(!openModal);
-    }
-  };
   const handleCancel = () => {
-    setRole("");
-    setNation("");
+    setFormData(initialValues);
+
     setOpenModal(!openModal);
   };
   const renderHead = (item, index) => <th key={index}>{item}</th>;
@@ -95,33 +100,23 @@ const Customers = () => {
   const renderBody = (item, index) => (
     <tr key={index}>
       <td className="pointer">{index + 1}</td>
-      <td className="pointer" onClick={() => navigate(`/users/${item?.id}`)}>
-        {item?.lastName + " " + item?.firstName}
+      <td className="pointer" onClick={() => navigate(`/contacts/${item?.id}`)}>
+        {item?.name}
       </td>
-      <td className="pointer" onClick={() => navigate(`/users/${item?.id}`)}>
+      <td className="pointer" onClick={() => navigate(`/contacts/${item?.id}`)}>
         {item?.email}
       </td>
 
-      <td className="pointer" onClick={() => navigate(`/users/${item?.id}`)}>
+      <td className="pointer" onClick={() => navigate(`/contacts/${item?.id}`)}>
+        {item?.state}
+      </td>
+      <td className="pointer" onClick={() => navigate(`/contacts/${item?.id}`)}>
         {item?.country}
       </td>
-      <td className="pointer" onClick={() => navigate(`/users/${item?.id}`)}>
-        <Badge
-          type={
-            item.status === true || item.status === "active"
-              ? "success"
-              : "warning"
-          }
-          content={
-            item.status === true || item.status === "active"
-              ? "verified"
-              : "unverified"
-          }
-        />
-      </td>
+
       <td>
         <button
-          onClick={() => navigate(`/users/${item?.id}`)}
+          onClick={() => navigate(`/contacts/${item?.id}`)}
           className="card__button "
         >
           View
@@ -131,8 +126,8 @@ const Customers = () => {
   );
 
   // let filteredItems = [];
-  let filteredItems = customerData?.data
-    ? customerData?.data?.filter(
+  let filteredItems = contactData?.contacts
+    ? contactData?.contacts?.filter(
         (item) =>
           item?.firstName?.toLowerCase()?.includes(search?.toLowerCase()) ||
           item?.lastName?.toLowerCase()?.includes(search?.toLowerCase()) ||
@@ -189,9 +184,10 @@ const Customers = () => {
               <i className="bx bx-filter"></i>
             </CSVLink>
           </div>
-          <div className="page-filter" onClick={() => navigate("/adduser")}>
+            */}
+          <div className="page-filter" onClick={() => setOpenModal(!openModal)}>
             <i className="bx bx-plus"></i>
-          </div> */}
+          </div>
         </div>
       </div>
       <div className="table-search">
@@ -207,35 +203,83 @@ const Customers = () => {
       {openModal && (
         <ModalOptions
           handleCancel={handleCancel}
-          title={"Create Manager/ Admin"}
+          title={"Create Contact"}
           btnText={"Save"}
           cancel
-          handleOption={handleSubmit}
+          loading={loading}
+          handleOption={handleAddContact}
         >
           <div className="flexx">
-            <span className="desc">
-              Make {selectedUser?.firstName + " "} a staff
-            </span>
             <div className="row1">
               <div className="coll-12">
                 <CompleteInput
-                  name="Role"
-                  title={"New Role"}
-                  select
-                  data={[
-                    { id: 1, value: "admin", label: "Admin" },
-                    { id: 2, value: "staff", label: "Staff" },
-                  ]}
-                  dataLabel={role}
+                  name="email"
+                  title={"Email"}
                   cancel={""}
-                  value={role}
                   type="text"
-                  onChange={(e) => setRole(e.target.value)}
+                  value={formData?.email}
+                  dataLabel={formData?.email}
+                  onChange={handleInputContactChange}
+                />
+              </div>
+              <div className="coll-12">
+                <CompleteInput
+                  name="country"
+                  title={"Country"}
+                  select
+                  data={countryData}
+                  dataLabel={formData?.country}
+                  value={formData?.country}
+                  cancel={""}
+                  type="text"
+                  onChange={handleInputContactChange}
+                />
+              </div>
+              <div className="coll-12">
+                <CompleteInput
+                  name="name"
+                  title={"Name"}
+                  cancel={""}
+                  type="text"
+                  value={formData?.name}
+                  dataLabel={formData?.name}
+                  onChange={handleInputContactChange}
+                />
+              </div>
+              <div className="coll-12">
+                <CompleteInput
+                  name="phone"
+                  title={"Phone"}
+                  dataLabel={formData?.phone}
+                  cancel={""}
+                  type="text"
+                  value={formData?.phone}
+                  onChange={handleInputContactChange}
+                />
+              </div>
+              <div className="coll-12">
+                <CompleteInput
+                  name="address"
+                  title={"Address"}
+                  dataLabel={formData?.address}
+                  cancel={""}
+                  type="text"
+                  value={formData?.address}
+                  onChange={handleInputContactChange}
+                />
+              </div>
+              <div className="coll-12">
+                <CompleteInput
+                  name="state"
+                  title={"State"}
+                  dataLabel={formData?.state}
+                  cancel={""}
+                  type="text"
+                  value={formData?.state}
+                  onChange={handleInputContactChange}
                 />
               </div>
             </div>
-
-            <span className="small">Welcome aboard</span>
           </div>
         </ModalOptions>
       )}
@@ -243,7 +287,7 @@ const Customers = () => {
         <div className="coll-12">
           <div className="card">
             <div className="card__body">
-              {userLoading ? (
+              {contactLoading ? (
                 <div>
                   <LoadingBox circle={true} />
                 </div>
@@ -296,4 +340,4 @@ const Customers = () => {
   );
 };
 
-export default Customers;
+export default Contacts;

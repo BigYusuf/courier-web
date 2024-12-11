@@ -1,163 +1,138 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { CSVLink } from "react-csv";
 
-import ProjectDataService from "../utils/firebaseUtils";
-import { convertTimeStamp, handleUploadImg } from "../utils/others";
-import { getEvents, getEventsByNation } from "../redux/slice/events";
-import {LoadingBox,CompleteInput, ModalOptions} from "../components";
-import { serverTimestamp } from "firebase/firestore";
-import { nationData } from "../data/registerData";
+import { convertTimeStamp } from "../utils/others";
+import { LoadingBox, CompleteInput, ModalOptions } from "../components";
+
 import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
-import { app } from "../firebase";
+  useAddPackageMutation,
+  useGetPackagesQuery,
+} from "../redux/slice/packages";
 
-const eventTableHead = ["", "Title", "nation", "date", "status", "action"];
+const packageTableHead = [
+  "",
+  "Title",
+  "zone",
+  "continent",
+  "date",
+  "status",
+  "action",
+];
 
 const Packages = () => {
   const [openModal, setOpenModal] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  // const { data: packageData, isLoading: packageLoad } =
+  //   useGetPackagesQuery();
+  // console.log(packageData);
   const [search, setSearch] = useState("");
-  const [eventForm, setEventForm] = useState({
-    nation: "",
+  const [packageForm, setPackageForm] = useState({
+    continent: "",
+    countries: "",
     title: "",
-    address: "",
-    desc: "",
-    timeframe: "",
-    image: "",
+    zone: "",
+    description: "",
   });
-  const [loadingEvent, setLoadingEvent] = useState(false);
+  const [loadingPackage, setLoadingPackage] = useState(false);
   const [file, setFile] = useState("");
 
-  //get user profile & manager profile
-  // const myProfile = useSelector((state) => state?.auth?.profile);
-  const managerProfile = useSelector((state) => state?.auth?.manager);
+  //get user profile or staff profile
+  const myProfile = useSelector((state) => state?.auth?.profile);
 
-  const allEvents = useSelector((state) => state.events.events);
-
-  const fetchEvents = async () => {
-    try {
-      //  console.log("object");
-      if (managerProfile?.role === "manager") {
-        const docSnap = await ProjectDataService.getEventsByNation(
-          managerProfile?.nation
-        );
-        //  console.log("object1", managerProfile?.nation);
-        dispatch(
-          getEventsByNation(
-            docSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-          )
-        );
-        // console.log(
-        //   "aaaa",
-        //   docSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-        // );
-      } else {
-        const docSnapAll = await ProjectDataService.getAllEvents();
-        //console.log("object2");
-        dispatch(
-          getEvents(
-            docSnapAll.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-          )
-        );
-      }
-    } catch (error) {
-      toast.error(
-        error?.message ? error?.message : "Could not fetch events, Reload"
-      );
-    }
+  const initialValues = {
+    page: 1,
+    limit: 20,
+    search: "",
+    category: "",
+    sort: "sales",
+    zone: "",
+    continent: "",
+    rate: "",
+    description: "",
+    countries: "",
+    minWeight: "",
+    maxWeight: "",
+    title: "",
+    status: "active",
   };
+  const initialPagination = {
+    next: ">",
+    prev: "<",
+    first: "<<<",
+    last: ">>>",
+  };
+  const [formPagination, setFormPagination] = useState(initialPagination);
+  // const [formData, setFormData] = useState(initialValues);
+  // const [openFilter, setOpenFilter] = useState(false);
+  // // const [LoadProducts, setLoadProducts] = useState([]);
+  // const minRef = useRef();
+  // const maxRef = useRef();
+  const [addPackage] = useAddPackageMutation();
+  const {
+    data: packagesData,
+    isLoading: packageLoad,
+    isSuccess: packageSuccess,
+    refetch,
+  } = useGetPackagesQuery();
+  // {
+  //   search: formData.search,
+  //   page: formData.page,
+  //   limit: formData.limit,
+  //   sort: formData.sort,
+  //   category: formData.category,
+  //   zone: formData.zone,
+  //   platform: formData.platform,
+  //   min: minRef?.current?.value,
+  //   max: maxRef?.current?.value,
+  // },
+  //   [packageForm, minRef, maxRef]
+  // );
+  // const allPackages = []; // useSelector((state) => state.packages.packages);
+  // console.log(packagesData);
 
-  const handleInputEventChange = (e) => {
+  const handleInputPackageChange = (e) => {
     const { name, value } = e.target;
-    setEventForm((prevData) => ({
+    setPackageForm((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
-  const handleImg = (e) => {
-    setFile(e.target.files[0]);
+  const handlePackage = (id) => {
+    //navigate to Package
+    navigate("/mypackages/" + id);
   };
 
-  const handleUpload = async () => {
-    const fileName = `${new Date().getTime() + eventForm?.title}`;
-    const storage = getStorage(app);
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {},
-      (error) => {
-        // Handle unsuccessful uploads
-        console.log(error);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-          setEventForm((prevData) => ({
-            ...prevData,
-            image: url,
-          }));
-          setFile("");
-        });
-      }
-    );
-  };
-
-  const handleEvent = (id) => {
-    //navigate to event
-    navigate("/events/" + id);
-  };
-
-  const handleAddEvent = async (e) => {
+  const handleAddPackage = async (e) => {
     e.preventDefault();
     try {
-      setLoadingEvent(true);
-      let payload = {
-        title: eventForm?.title,
-        desc: eventForm?.desc,
-        nation:
-          managerProfile?.role === "manager"
-            ? managerProfile?.nation
-            : eventForm?.nation,
-        timeframe: eventForm?.timeframe,
-        image: eventForm?.image,
-        address: eventForm?.address,
-        createdBy: managerProfile?.id,
-        creatorClass: managerProfile?.role,
-        status: "active",
-        createdAt: serverTimestamp(),
-        updatedAt: "",
-      };
+      setLoadingPackage(true);
 
-      await ProjectDataService.addEvent(payload);
-      fetchEvents();
-      setEventForm({
-        title: "",
-        image: "",
-        timeframe: "",
-        address: "",
-        desc: "",
-      });
-      setOpenModal(!openModal);
-      setLoadingEvent(false);
-      toast.success("Event Created Success");
+      let payload = {
+        title: packageForm?.title,
+        description: packageForm?.description,
+        zone: packageForm?.zone,
+        countries: packageForm?.countries,
+        continent: packageForm?.continent,
+        status: "active",
+      };
+      const addpack = await addPackage(payload).unwrap();
+      // fetchPackages();
+      if (addpack?.success) {
+        refetch();
+        setPackageForm(initialValues);
+        setOpenModal(!openModal);
+        setLoadingPackage(false);
+        toast.success("Package Created Success");
+      }
     } catch (error) {
       toast.error(error?.message ? error?.message : "Error occured");
-      setLoadingEvent(false);
+      setLoadingPackage(false);
     }
   };
-
-  useEffect(() => {
-    fetchEvents();
-  }, []);
 
   const closeModal = () => {
     if (openModal) {
@@ -170,42 +145,48 @@ const Packages = () => {
     <tr key={index}>
       <td>{index + 1}</td>
       <td>
-        <div className="pointer" onClick={() => handleEvent(item?.id)}>
-          {item.title}
+        <div className="pointer" onClick={() => handlePackage(item?.id)}>
+          {item?.title}
         </div>
       </td>
-      <td>{item.nation}</td>
-      <td>{convertTimeStamp(item.createdAt)}</td>
+      <td>{item?.zone}</td>
+      <td>{item?.continent}</td>
+      <td>{convertTimeStamp(item?.createdAt)}</td>
       <td>
         <div
           className={
-            item.status === "active"
+            item?.status === "active"
               ? "status_green pointer"
               : "status_blue pointer"
           }
-          onClick={() => handleEvent(item?.id)}
+          onClick={() => handlePackage(item?.id)}
         >
-          {item.status}
+          {item?.status}
         </div>
       </td>
       <td>
-        <button onClick={() => handleEvent(item?.id)} className="card__button">
+        <button
+          onClick={() => handlePackage(item?.id)}
+          className="card__button"
+        >
           View
         </button>
       </td>
     </tr>
   );
 
-  let filteredItems = allEvents?.filter(
-    (item) =>
-      item?.title?.toLowerCase()?.includes(search?.toLowerCase()) ||
-      item?.nation?.toLowerCase()?.includes(search?.toLowerCase()) ||
-      item?.status?.toLowerCase()?.includes(search?.toLowerCase())
-  );
+  let filteredItems = packagesData?.packages
+    ? packagesData?.packages?.filter(
+        (item) =>
+          item?.title?.toLowerCase()?.includes(search?.toLowerCase()) ||
+          item?.zone?.toLowerCase()?.includes(search?.toLowerCase()) ||
+          item?.countries?.toLowerCase()?.includes(search?.toLowerCase())
+      )
+    : [];
   const limit = "10";
   const initDataShow =
     limit && filteredItems
-      ? filteredItems.slice(0, Number(limit))
+      ? filteredItems?.slice(0, Number(limit))
       : filteredItems;
 
   const [dataShow, setDataShow] = useState(initDataShow);
@@ -215,8 +196,8 @@ const Packages = () => {
   let range = [];
 
   if (limit !== undefined) {
-    let page = Math.floor(filteredItems.length / Number(limit));
-    pages = filteredItems.length % Number(limit) === 0 ? page : page + 1;
+    let page = Math.floor(filteredItems?.length / Number(limit));
+    pages = filteredItems?.length % Number(limit) === 0 ? page : page + 1;
     range = [...Array(pages).keys()];
   }
 
@@ -226,15 +207,15 @@ const Packages = () => {
     const start = Number(limit) * page;
     const end = start + Number(limit);
 
-    setDataShow(filteredItems.slice(start, end));
+    setDataShow(filteredItems?.slice(start, end));
 
     setCurrPage(page);
   };
 
   return (
-    <div className="container" onClick={closeModal}>
+    <div className="containerr" onClick={closeModal}>
       <div className="page-top">
-        <h2 className="page-header-alt">Events</h2>
+        <h2 className="page-header-alt">Packages</h2>
 
         <div className="page-options">
           <div className="page-search">
@@ -247,11 +228,11 @@ const Packages = () => {
             <i className="bx bx-search"></i>
           </div>
 
-          <div className="page-filter">
+          {/* <div className="page-filter">
             <CSVLink data={filteredItems}>
               <i className="bx bx-filter"></i>
             </CSVLink>
-          </div>
+          </div> */}
           <div className="page-filter" onClick={() => setOpenModal(true)}>
             <i className="bx bx-plus"></i>
           </div>
@@ -269,94 +250,112 @@ const Packages = () => {
       {openModal && (
         <ModalOptions
           handleCancel={() => setOpenModal(!openModal)}
-          title={"Create Event"}
+          title={"Create Package"}
           btnText={"Save"}
           cancel={"Cancel"}
-          handleOption={handleAddEvent}
+          handleOption={handleAddPackage}
+          loading={loadingPackage}
         >
           <div className="flexx">
-            <span className="desc">Access to unlimited Possibilities</span>
+            {/* <span className="desc">Access to unlimited Possibilities</span> */}
             <div className="row1">
               <div className="coll-6">
                 <CompleteInput
                   name="title"
                   title={"Title"}
                   type="text"
-                  onChange={handleInputEventChange}
-                  dataLabel={eventForm?.title}
-                  value={eventForm?.title}
+                  onChange={handleInputPackageChange}
+                  dataLabel={packageForm?.title}
+                  value={packageForm?.title}
                   cancel=""
                 />
               </div>
               <div className="coll-6">
                 <CompleteInput
-                  name="address"
-                  title={"Address"}
+                  name="zone"
+                  title={"Zone"}
                   type="text"
-                  onChange={handleInputEventChange}
-                  dataLabel={eventForm?.address}
-                  value={eventForm?.address}
+                  onChange={handleInputPackageChange}
+                  dataLabel={packageForm?.zone}
+                  value={packageForm?.zone}
+                  cancel=""
+                />
+              </div>
+              {/* 
+              <div className="coll-6">
+                <CompleteInput
+                  name="minWeight"
+                  title={"MinWeight"}
+                  type="text"
+                  onChange={handleInputPackageChange}
+                  dataLabel={packageForm?.minWeight}
+                  value={packageForm?.minWeight}
                   cancel=""
                 />
               </div>
               <div className="coll-6">
                 <CompleteInput
-                  name="desc"
+                  name="maxWeight"
+                  title={"MaxWeight"}
+                  type="text"
+                  onChange={handleInputPackageChange}
+                  dataLabel={packageForm?.maxWeight}
+                  value={packageForm?.maxWeight}
+                  cancel=""
+                />
+              </div>
+              <div className="coll-6">
+                <CompleteInput
+                  name="rate"
+                  title={"Rate"}
+                  type="text"
+                  onChange={handleInputPackageChange}
+                  dataLabel={packageForm?.rate}
+                  value={packageForm?.rate}
+                  cancel=""
+                />
+              </div> */}
+              <div className="coll-6">
+                <CompleteInput
+                  name="description"
                   title={"description"}
                   textarea
                   type="text"
-                  onChange={handleInputEventChange}
-                  dataLabel={eventForm?.desc}
-                  value={eventForm?.desc}
-                  cancel=""
-                />
-              </div>
-              <div className="coll-6">
-                <CompleteInput
-                  name="image"
-                  title={"Image"}
-                  onChange={handleInputEventChange}
-                  onChangeFile={handleImg}
-                  file={file}
-                  singleImage
-                  handleUpload={handleUpload}
-                  data={nationData}
-                  dataLabel={eventForm?.image}
-                  value={eventForm?.image}
+                  onChange={handleInputPackageChange}
+                  dataLabel={packageForm?.description}
+                  value={packageForm?.description}
                   cancel=""
                 />
               </div>
 
-              {(managerProfile?.role === "admin" ||
-                managerProfile?.role === "superAdmin") && (
-                <div className="coll-6">
-                  <CompleteInput
-                    name="nation"
-                    title={"Nation"}
-                    onChange={handleInputEventChange}
-                    select={true}
-                    data={nationData}
-                    dataLabel={eventForm?.nation}
-                    value={eventForm?.nation}
-                    cancel=""
-                  />
-                </div>
-              )}
+              {/* {(myProfile?.role === "admin" ||
+                myProfile?.role === "superAdmin") && ( */}
               <div className="coll-6">
                 <CompleteInput
-                  name="timeframe"
-                  title={"timeframe"}
+                  name="continent"
+                  title={"Continent"}
+                  onChange={handleInputPackageChange}
+                  // select={true}
+                  // data={nationData}
+                  dataLabel={packageForm?.continent}
+                  value={packageForm?.continent}
+                  cancel=""
+                />
+              </div>
+              {/* )} */}
+              <div className="coll-6">
+                <CompleteInput
+                  name="countries"
+                  title={"Countries"}
                   type="text"
-                  onChange={handleInputEventChange}
-                  dataLabel={eventForm?.timeframe}
-                  value={eventForm?.timeframe}
+                  onChange={handleInputPackageChange}
+                  dataLabel={packageForm?.countries}
+                  value={packageForm?.countries}
                   cancel=""
                 />
               </div>
             </div>
-            <span className="small">
-              Event created by Manager will only be visible to that region
-            </span>
+            <span className="small">Use comma to seperate each countries</span>
           </div>
         </ModalOptions>
       )}
@@ -364,20 +363,21 @@ const Packages = () => {
         <div className="coll-12">
           <div className="card">
             <div className="card__body">
-              {loadingEvent ? (
+              {packageLoad ? (
                 <div className="flexx">
                   <LoadingBox circle={true} />
                 </div>
-              ) : allEvents?.length <= 0 ? (
-                <div>No events created yet...</div>
+              ) : // ) : packagesData?.packages?.length <= 0 ? (
+              !packageSuccess ? (
+                <div>No Packages available yet...</div>
               ) : (
                 <div>
                   <div className="table-wrapper">
                     <table>
-                      {eventTableHead && renderHead ? (
+                      {packageTableHead && renderHead ? (
                         <thead>
                           <tr>
-                            {eventTableHead.map((item, index) =>
+                            {packageTableHead.map((item, index) =>
                               renderHead(item, index)
                             )}
                           </tr>

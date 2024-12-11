@@ -1,9 +1,9 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./sidebar.css";
 import { useDispatch, useSelector } from "react-redux";
 
-//import logo from '../../assets/images/logo.png'
+import logo from "../../assets/images/logo.png";
 import sidebar_items from "../../assets/JsonData/sidebar_routes.json";
 import { setActiveSideBar } from "../../redux/slice/sidebar";
 
@@ -26,12 +26,13 @@ const SidebarItem = (props) => {
 
 const Sidebar = () => {
   const location = useLocation();
-  const managerProfile = useSelector((state) => state?.auth?.manager);
+  const myProfile = useSelector((state) => state?.auth?.profile);
   const activeSideBar = useSelector((state) => state?.sidebar?.activeSideBar);
+
   const sidebarData = [
     {
       display_name: "Dashboard",
-      route: "/",
+      route: "/dashboard",
       icon: "bx bx-category-alt",
     },
     {
@@ -40,37 +41,66 @@ const Sidebar = () => {
       icon: "bx bx-user-pin",
     },
     {
-      display_name: "Feedbacks",
-      route: "/feedbacks",
+      display_name: "Packages",
+      route: "/mypackages",
       icon: "bx bx-package",
     },
     {
-      display_name: "Events",
-      route: "/events",
+      display_name: "Orders",
+      route: "/orders",
       icon: "bx bx-cart",
     },
     {
-      display_name: "evaluation",
-      route: "/evaluation",
+      display_name: "Message",
+      route: "/message",
       icon: "bx bx-chart",
     },
   ];
-  let data = managerProfile?.role === "manager" ? sidebarData : sidebar_items;
+  const sidebarDataUser = [
+    {
+      display_name: "Dashboard",
+      route: "/dashboard",
+      icon: "bx bx-category-alt",
+    },
+    {
+      display_name: "Orders",
+      route: "/orders",
+      icon: "bx bx-cart",
+    },
+    {
+      display_name: "Contacts",
+      route: "/contacts",
+      icon: "bx bx-user-pin",
+    },
+    {
+      display_name: "Messages",
+      route: "/messages",
+      icon: "bx bx-envelope",
+    },
+  ];
+  let data =
+    myProfile?.role === "user"
+      ? sidebarDataUser
+      : myProfile?.role === "staff"
+      ? sidebarData
+      : sidebar_items;
 
   const activeItem = data?.findIndex(
     (item) => item?.route === location?.pathname
   );
-  
+  const navigate = useNavigate();
+  const handleHome = () => {
+    navigate("/");
+  };
   return (
     <div className={activeSideBar ? "sidebar activeSidebar" : "sidebar"}>
-      <div className="sidebar__logo">
-        {/*<img src={logo} alt="company logo" />*/}
-        <h1 className="sidebar__logo">
-          <span className="sidebar__logo-span">
-            {managerProfile?.role === "manager" ? "Manager" : "Admin"}
-          </span>{" "}
-          Suite
-        </h1>
+      <div className="sidebar__logo" onClick={handleHome}>
+        <img
+          src={logo}
+          style={{ width: 150, height: 120 }}
+          alt="company logo"
+        />
+        
       </div>
       {data.map((item, index) => (
         <Link to={item.route} key={index}>

@@ -1,5 +1,5 @@
 {
-  "name": "logistic",
+  "name": "coral-logistic",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

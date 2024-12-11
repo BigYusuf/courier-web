@@ -1,6 +1,6 @@
 import RedirectIfAuthenticated from './RedirectIfAuthenticated';
 import RequireAuth from './RequireAuth';
-import ForUsersOnly from './ForUsersOnly';
+import ForStaffsOnly from './ForStaffsOnly';
 import RolePermit from './RoleBasePermit';
 
-export { RedirectIfAuthenticated, RequireAuth, ForUsersOnly, RolePermit }
+export { RedirectIfAuthenticated, RequireAuth, ForStaffsOnly, RolePermit }

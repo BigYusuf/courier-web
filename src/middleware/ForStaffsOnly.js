@@ -2,12 +2,12 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-function ForUsersOnly({ Component }) {
-  const userProfile = useSelector((state) => state?.auth?.profile);
+function ForStaffsOnly({ Component }) {
+  const staffProfile = useSelector((state) => state?.auth?.profile);
 
-  if (userProfile?.role !== "user") {
+  if (staffProfile?.role !== "staff") {
     return <Navigate to="/" />;
   }
   return <Component />;
 }
-export default ForUsersOnly;
+export default ForStaffsOnly;

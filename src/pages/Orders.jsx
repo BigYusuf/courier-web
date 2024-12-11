@@ -1,163 +1,80 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { CSVLink } from "react-csv";
 
-import ProjectDataService from "../utils/firebaseUtils";
-import { convertTimeStamp, handleUploadImg } from "../utils/others";
-import { getEvents, getEventsByNation } from "../redux/slice/events";
-import {LoadingBox,CompleteInput, ModalOptions} from "../components";
-import { serverTimestamp } from "firebase/firestore";
-import { nationData } from "../data/registerData";
+import { convertTimeStamp } from "../utils/others";
+import { LoadingBox, CompleteInput, ModalOptions } from "../components";
+import { setMakeOrder } from "../redux/slice/orders/orderSlice";
 import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
-import { app } from "../firebase";
+  useGetAdminOrdersQuery,
+  useGetOrdersQuery,
+} from "../redux/slice/orders";
 
-const eventTableHead = ["", "Title", "nation", "date", "status", "action"];
+const orderTableHead = [
+  "",
+  "Sender",
+  "receiver",
+  "tracker id",
+  "date",
+  "status",
+  "action",
+];
 
 const Orders = () => {
   const [openModal, setOpenModal] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [search, setSearch] = useState("");
-  const [eventForm, setEventForm] = useState({
-    nation: "",
-    title: "",
-    address: "",
-    desc: "",
-    timeframe: "",
-    image: "",
-  });
-  const [loadingEvent, setLoadingEvent] = useState(false);
-  const [file, setFile] = useState("");
 
   //get user profile & manager profile
-  // const myProfile = useSelector((state) => state?.auth?.profile);
-  const managerProfile = useSelector((state) => state?.auth?.manager);
+  const myProfile = useSelector((state) => state?.auth?.profile);
 
-  const allEvents = useSelector((state) => state.events.events);
-
-  const fetchEvents = async () => {
-    try {
-      //  console.log("object");
-      if (managerProfile?.role === "manager") {
-        const docSnap = await ProjectDataService.getEventsByNation(
-          managerProfile?.nation
-        );
-        //  console.log("object1", managerProfile?.nation);
-        dispatch(
-          getEventsByNation(
-            docSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-          )
-        );
-        // console.log(
-        //   "aaaa",
-        //   docSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-        // );
-      } else {
-        const docSnapAll = await ProjectDataService.getAllEvents();
-        //console.log("object2");
-        dispatch(
-          getEvents(
-            docSnapAll.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-          )
-        );
-      }
-    } catch (error) {
-      toast.error(
-        error?.message ? error?.message : "Could not fetch events, Reload"
-      );
-    }
+  const [search, setSearch] = useState("");
+  const initTracker = {
+    realTracker: "",
+    status: "",
+    description: "",
   };
+  const [orderForm, setOrderForm] = useState(initTracker);
+  const [loadingOrder, setLoadingOrder] = useState(false);
 
-  const handleInputEventChange = (e) => {
+  const handleInputOrderChange = (e) => {
     const { name, value } = e.target;
-    setEventForm((prevData) => ({
+    setOrderForm((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
-  const handleImg = (e) => {
-    setFile(e.target.files[0]);
+  const handleOrder = (id) => {
+    //navigate to Order
+    navigate("/orders/" + id);
   };
+  const { data: orderData, isFetching: orderFetch } = useGetOrdersQuery(
+    undefined,
+    {
+      skip: myProfile?.role !== "user" ? true : false,
+    }
+  );
+  const { data: orderAdminData, isFetching: orderAdminFetch } =
+    useGetAdminOrdersQuery(undefined, {
+      skip: myProfile?.role === "user" ? true : false,
+    });
 
-  const handleUpload = async () => {
-    const fileName = `${new Date().getTime() + eventForm?.title}`;
-    const storage = getStorage(app);
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {},
-      (error) => {
-        // Handle unsuccessful uploads
-        console.log(error);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-          setEventForm((prevData) => ({
-            ...prevData,
-            image: url,
-          }));
-          setFile("");
-        });
-      }
-    );
-  };
-
-  const handleEvent = (id) => {
-    //navigate to event
-    navigate("/events/" + id);
-  };
-
-  const handleAddEvent = async (e) => {
+  const handleUpdatedOrder = async (e) => {
     e.preventDefault();
     try {
-      setLoadingEvent(true);
-      let payload = {
-        title: eventForm?.title,
-        desc: eventForm?.desc,
-        nation:
-          managerProfile?.role === "manager"
-            ? managerProfile?.nation
-            : eventForm?.nation,
-        timeframe: eventForm?.timeframe,
-        image: eventForm?.image,
-        address: eventForm?.address,
-        createdBy: managerProfile?.id,
-        creatorClass: managerProfile?.role,
-        status: "active",
-        createdAt: serverTimestamp(),
-        updatedAt: "",
-      };
+      setLoadingOrder(true);
 
-      await ProjectDataService.addEvent(payload);
-      fetchEvents();
-      setEventForm({
-        title: "",
-        image: "",
-        timeframe: "",
-        address: "",
-        desc: "",
-      });
+      setOrderForm(initTracker);
       setOpenModal(!openModal);
-      setLoadingEvent(false);
-      toast.success("Event Created Success");
+      setLoadingOrder(false);
+      toast.success("Order Updated Success");
     } catch (error) {
       toast.error(error?.message ? error?.message : "Error occured");
-      setLoadingEvent(false);
+      setLoadingOrder(false);
     }
   };
-
-  useEffect(() => {
-    fetchEvents();
-  }, []);
 
   const closeModal = () => {
     if (openModal) {
@@ -170,11 +87,12 @@ const Orders = () => {
     <tr key={index}>
       <td>{index + 1}</td>
       <td>
-        <div className="pointer" onClick={() => handleEvent(item?.id)}>
-          {item.title}
+        <div className="pointer" onClick={() => handleOrder(item?.id)}>
+          {item.senderName}
         </div>
       </td>
-      <td>{item.nation}</td>
+      <td>{item.destName}</td>
+      <td>{item.tracker}</td>
       <td>{convertTimeStamp(item.createdAt)}</td>
       <td>
         <div
@@ -183,40 +101,72 @@ const Orders = () => {
               ? "status_green pointer"
               : "status_blue pointer"
           }
-          onClick={() => handleEvent(item?.id)}
+          onClick={() => handleOrder(item?.id)}
         >
           {item.status}
         </div>
       </td>
       <td>
-        <button onClick={() => handleEvent(item?.id)} className="card__button">
+        <button onClick={() => handleOrder(item?.id)} className="card__button">
           View
         </button>
       </td>
     </tr>
   );
 
-  let filteredItems = allEvents?.filter(
-    (item) =>
-      item?.title?.toLowerCase()?.includes(search?.toLowerCase()) ||
-      item?.nation?.toLowerCase()?.includes(search?.toLowerCase()) ||
-      item?.status?.toLowerCase()?.includes(search?.toLowerCase())
-  );
+  let filteredAdminItems = orderAdminData?.data
+    ? orderAdminData?.data?.filter(
+        (item) =>
+          item?.senderName?.toLowerCase()?.includes(search?.toLowerCase()) ||
+          item?.senderEmail?.toLowerCase()?.includes(search?.toLowerCase()) ||
+          item?.destName?.toLowerCase()?.includes(search?.toLowerCase()) ||
+          item?.destEmail?.toLowerCase()?.includes(search?.toLowerCase()) ||
+          item?.status?.toLowerCase()?.includes(search?.toLowerCase())
+      )
+    : [];
+
+  let filteredItems = orderData?.data
+    ? orderData?.data?.filter(
+        (item) =>
+          item?.senderName?.toLowerCase()?.includes(search?.toLowerCase()) ||
+          item?.senderEmail?.toLowerCase()?.includes(search?.toLowerCase()) ||
+          item?.destName?.toLowerCase()?.includes(search?.toLowerCase()) ||
+          item?.destEmail?.toLowerCase()?.includes(search?.toLowerCase()) ||
+          item?.status?.toLowerCase()?.includes(search?.toLowerCase())
+      )
+    : [];
   const limit = "10";
   const initDataShow =
     limit && filteredItems
       ? filteredItems.slice(0, Number(limit))
       : filteredItems;
+  const initDataShowAdmin =
+    limit && filteredAdminItems
+      ? filteredAdminItems.slice(0, Number(limit))
+      : filteredAdminItems;
 
-  const [dataShow, setDataShow] = useState(initDataShow);
+  const [dataShow, setDataShow] = useState(
+    myProfile?.role === "user" ? initDataShow : initDataShowAdmin
+  );
 
   let pages = 1;
 
   let range = [];
 
   if (limit !== undefined) {
-    let page = Math.floor(filteredItems.length / Number(limit));
-    pages = filteredItems.length % Number(limit) === 0 ? page : page + 1;
+    let page =
+      myProfile?.role === "user"
+        ? Math.floor(filteredItems.length / Number(limit))
+        : Math.floor(filteredAdminItems.length / Number(limit));
+
+    pages =
+      myProfile?.role === "user"
+        ? filteredItems?.length % Number(limit) === 0
+          ? page
+          : page + 1
+        : filteredAdminItems?.length % Number(limit) === 0
+        ? page
+        : page + 1;
     range = [...Array(pages).keys()];
   }
 
@@ -225,16 +175,18 @@ const Orders = () => {
   const selectPage = (page) => {
     const start = Number(limit) * page;
     const end = start + Number(limit);
-
-    setDataShow(filteredItems.slice(start, end));
-
+    if (myProfile?.role === "user") {
+      setDataShow(filteredItems?.slice(start, end));
+    } else {
+      setDataShow(filteredAdminItems?.slice(start, end));
+    }
     setCurrPage(page);
   };
 
   return (
-    <div className="container" onClick={closeModal}>
+    <div className="containerr" onClick={closeModal}>
       <div className="page-top">
-        <h2 className="page-header-alt">Events</h2>
+        <h2 className="page-header-alt">Orders</h2>
 
         <div className="page-options">
           <div className="page-search">
@@ -246,15 +198,19 @@ const Orders = () => {
             />
             <i className="bx bx-search"></i>
           </div>
-
-          <div className="page-filter">
-            <CSVLink data={filteredItems}>
-              <i className="bx bx-filter"></i>
-            </CSVLink>
-          </div>
-          <div className="page-filter" onClick={() => setOpenModal(true)}>
-            <i className="bx bx-plus"></i>
-          </div>
+          {/* for only customer */}
+          {myProfile?.role === "user" && (
+            <div
+              className="page-filter"
+              onClick={() => {
+                if (myProfile?.role === "user") {
+                  dispatch(setMakeOrder(true));
+                }
+              }}
+            >
+              <i className="bx bx-plus"></i>
+            </div>
+          )}
         </div>
       </div>
       <div className="table-search">
@@ -269,147 +225,154 @@ const Orders = () => {
       {openModal && (
         <ModalOptions
           handleCancel={() => setOpenModal(!openModal)}
-          title={"Create Event"}
+          title={"Update Status"}
           btnText={"Save"}
           cancel={"Cancel"}
-          handleOption={handleAddEvent}
+          handleOption={handleUpdatedOrder}
+          loading={loadingOrder}
         >
           <div className="flexx">
-            <span className="desc">Access to unlimited Possibilities</span>
+            <span className="desc">Update Order Status</span>
             <div className="row1">
               <div className="coll-6">
                 <CompleteInput
-                  name="title"
-                  title={"Title"}
+                  name="realTracker"
+                  title={"Tracking ID"}
                   type="text"
-                  onChange={handleInputEventChange}
-                  dataLabel={eventForm?.title}
-                  value={eventForm?.title}
+                  onChange={handleInputOrderChange}
+                  dataLabel={orderForm?.realTracker}
+                  value={orderForm?.realTracker}
                   cancel=""
                 />
               </div>
               <div className="coll-6">
                 <CompleteInput
-                  name="address"
-                  title={"Address"}
+                  name="status"
+                  title={"Status"}
                   type="text"
-                  onChange={handleInputEventChange}
-                  dataLabel={eventForm?.address}
-                  value={eventForm?.address}
+                  onChange={handleInputOrderChange}
+                  dataLabel={orderForm?.status}
+                  value={orderForm?.status}
                   cancel=""
                 />
               </div>
               <div className="coll-6">
                 <CompleteInput
-                  name="desc"
+                  name="description"
                   title={"description"}
                   textarea
                   type="text"
-                  onChange={handleInputEventChange}
-                  dataLabel={eventForm?.desc}
-                  value={eventForm?.desc}
-                  cancel=""
-                />
-              </div>
-              <div className="coll-6">
-                <CompleteInput
-                  name="image"
-                  title={"Image"}
-                  onChange={handleInputEventChange}
-                  onChangeFile={handleImg}
-                  file={file}
-                  singleImage
-                  handleUpload={handleUpload}
-                  data={nationData}
-                  dataLabel={eventForm?.image}
-                  value={eventForm?.image}
-                  cancel=""
-                />
-              </div>
-
-              {(managerProfile?.role === "admin" ||
-                managerProfile?.role === "superAdmin") && (
-                <div className="coll-6">
-                  <CompleteInput
-                    name="nation"
-                    title={"Nation"}
-                    onChange={handleInputEventChange}
-                    select={true}
-                    data={nationData}
-                    dataLabel={eventForm?.nation}
-                    value={eventForm?.nation}
-                    cancel=""
-                  />
-                </div>
-              )}
-              <div className="coll-6">
-                <CompleteInput
-                  name="timeframe"
-                  title={"timeframe"}
-                  type="text"
-                  onChange={handleInputEventChange}
-                  dataLabel={eventForm?.timeframe}
-                  value={eventForm?.timeframe}
+                  onChange={handleInputOrderChange}
+                  dataLabel={orderForm?.description}
+                  value={orderForm?.description}
                   cancel=""
                 />
               </div>
             </div>
-            <span className="small">
-              Event created by Manager will only be visible to that region
-            </span>
+            <span className="small">Only Staff can access this popup</span>
           </div>
         </ModalOptions>
       )}
       <div className="row1">
         <div className="coll-12">
           <div className="card">
-            <div className="card__body">
-              {loadingEvent ? (
-                <div className="flexx">
-                  <LoadingBox circle={true} />
-                </div>
-              ) : allEvents?.length <= 0 ? (
-                <div>No events created yet...</div>
-              ) : (
-                <div>
-                  <div className="table-wrapper">
-                    <table>
-                      {eventTableHead && renderHead ? (
-                        <thead>
-                          <tr>
-                            {eventTableHead.map((item, index) =>
-                              renderHead(item, index)
-                            )}
-                          </tr>
-                        </thead>
-                      ) : null}
-                      {filteredItems && renderBody ? (
-                        <tbody>
-                          {filteredItems?.map((item, index) =>
-                            renderBody(item, index)
-                          )}
-                        </tbody>
-                      ) : null}
-                    </table>
+            {myProfile?.role === "user" ? (
+              <div className="card__body">
+                {orderFetch ? (
+                  <div className="flexx">
+                    <LoadingBox circle={true} />
                   </div>
-                  {pages > 1 ? (
-                    <div className="table__pagination">
-                      {range.map((item, index) => (
-                        <div
-                          key={index}
-                          className={`table__pagination-item ${
-                            currPage === index ? "active" : ""
-                          }`}
-                          onClick={() => selectPage(index)}
-                        >
-                          {item + 1}
-                        </div>
-                      ))}
+                ) : filteredItems?.length <= 0 ? (
+                  <div>No Orders created yet...</div>
+                ) : (
+                  <div>
+                    <div className="table-wrapper">
+                      <table>
+                        {orderTableHead && renderHead ? (
+                          <thead>
+                            <tr>
+                              {orderTableHead.map((item, index) =>
+                                renderHead(item, index)
+                              )}
+                            </tr>
+                          </thead>
+                        ) : null}
+                        {filteredItems && renderBody ? (
+                          <tbody>
+                            {filteredItems?.map((item, index) =>
+                              renderBody(item, index)
+                            )}
+                          </tbody>
+                        ) : null}
+                      </table>
                     </div>
-                  ) : null}
-                </div>
-              )}
-            </div>
+                    {pages > 1 ? (
+                      <div className="table__pagination">
+                        {range.map((item, index) => (
+                          <div
+                            key={index}
+                            className={`table__pagination-item ${
+                              currPage === index ? "active" : ""
+                            }`}
+                            onClick={() => selectPage(index)}
+                          >
+                            {item + 1}
+                          </div>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="card__body">
+                {orderAdminFetch ? (
+                  <div className="flexx">
+                    <LoadingBox circle={true} />
+                  </div>
+                ) : filteredAdminItems?.length <= 0 ? (
+                  <div>No Orders created yet...</div>
+                ) : (
+                  <div>
+                    <div className="table-wrapper">
+                      <table>
+                        {orderTableHead && renderHead ? (
+                          <thead>
+                            <tr>
+                              {orderTableHead.map((item, index) =>
+                                renderHead(item, index)
+                              )}
+                            </tr>
+                          </thead>
+                        ) : null}
+                        {filteredAdminItems && renderBody ? (
+                          <tbody>
+                            {filteredAdminItems?.map((item, index) =>
+                              renderBody(item, index)
+                            )}
+                          </tbody>
+                        ) : null}
+                      </table>
+                    </div>
+                    {pages > 1 ? (
+                      <div className="table__pagination">
+                        {range.map((item, index) => (
+                          <div
+                            key={index}
+                            className={`table__pagination-item ${
+                              currPage === index ? "active" : ""
+                            }`}
+                            onClick={() => selectPage(index)}
+                          >
+                            {item + 1}
+                          </div>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

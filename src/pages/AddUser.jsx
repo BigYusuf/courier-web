@@ -1,19 +1,9 @@
 import React, { useState } from "react";
-import { serverTimestamp } from "firebase/firestore";
 import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  updateProfile,
-} from "firebase/auth";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import ProjectDataService from "../utils/firebaseUtils";
-import { nationDataUser, reserveData } from "../data/registerData";
-import { fetchManagers, fetchUsers } from "../utils/fetch";
-import { auth } from "../firebase";
-import { handleUploadImg } from "../utils/others";
+// import { handleUploadImg } from "../utils/others";
 import { Button, CompleteInput } from "../components";
 
 const AddUser = () => {
@@ -41,7 +31,7 @@ const AddUser = () => {
     nation: "",
     reserve: "",
     tribalCouncil: "MLTC",
-    createdAt: serverTimestamp(),
+    createdAt: Date.now(),
   };
   const [formData, setFormData] = useState(initialData);
   const [file, setFile] = useState("");
@@ -49,8 +39,6 @@ const AddUser = () => {
   const [loading, setLoading] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  // const managerProfile = useSelector((state) => state?.auth?.manager);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -65,11 +53,11 @@ const AddUser = () => {
   };
 
   const handleUpload = async () => {
-    let url = await handleUploadImg(file, formData?.firstName);
+    // let url = await handleUploadImg(file, formData?.firstName);
 
     setFormData((prevData) => ({
       ...prevData,
-      image: url,
+      // image: url,
     }));
     setFile("");
   };
@@ -135,18 +123,7 @@ const AddUser = () => {
       value: formData?.phone2,
       cancel: "",
     },
-    {
-      id: 13,
-      title: "reserve*",
-      placeholder: "Select Reserve",
-      name: "reserve",
-      data: reserveData,
-      onChange: handleInputChange,
-      dataLabel: formData?.reserve,
-      value: formData?.reserve,
-      cancel: "",
-      select: true,
-    },
+
     {
       id: 5,
       title: "Address",
@@ -176,18 +153,6 @@ const AddUser = () => {
       dataLabel: formData?.town,
       value: formData?.town,
       cancel: "",
-    },
-    {
-      id: 8,
-      title: "Nation*",
-      placeholder: "Select Nation",
-      name: "nation",
-      data: nationDataUser,
-      onChange: handleInputChange,
-      dataLabel: formData?.nation,
-      value: formData?.nation,
-      cancel: "",
-      select: true,
     },
     {
       id: 9,
@@ -248,7 +213,7 @@ const AddUser = () => {
         return;
       }
       setLoading(true);
-      formData.createdAt = serverTimestamp();
+      formData.createdAt = Date.now();
       const email = formData?.email;
       // const newUser = await createUserWithEmailAndPassword(
       //   auth,
@@ -272,7 +237,7 @@ const AddUser = () => {
       // //update user added
       // await ProjectDataService.updateManager(managerProfile?.id, {
       //   usersAdded: managerProfile?.usersAdded + 1,
-      //   updatedAt: serverTimestamp(),
+      //   updatedAt: Date.now(),
       // });
 
       // //fetch users

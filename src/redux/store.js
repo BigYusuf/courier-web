@@ -1,11 +1,11 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { api } from "./api";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import authReducer from "./slice/auth";
-import feedbacksReducer from "./slice/feedbacks";
-import eventsReducer from "./slice/events";
+import authReducer from "./slice/auth/authSlice";
+import orderReducer from "./slice/orders/orderSlice";
+// import eventsReducer from "./slice/events";
 import ThemeReducer from "./slice/theme";
-import questionsReducer from "./slice/question";
+// import userReducer from "./slice/user";
 import sidebarReducer from "./slice/sidebar";
 import storage from "redux-persist/lib/storage";
 import {
@@ -25,11 +25,9 @@ const persistConfig = {
   blacklist: ["apiProductSlice"],
 };
 export const rootReducers = combineReducers({
-  //  [api.reducerPath]: api.reducer,
-  feedbacks: feedbacksReducer,
-  events: eventsReducer,
+  [api.reducerPath]: api.reducer,
+  order: orderReducer,
   auth: authReducer,
-  questions: questionsReducer,
   theme: ThemeReducer,
   sidebar: sidebarReducer,
 });

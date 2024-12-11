@@ -4,7 +4,7 @@ import ModalOptions from "../components/modalOption";
 
 const Inventory = () => {
   return (
-    <div className="container pad">
+    <div className="containerr pad">
       <ModalOptions title={"Inventory"} goHome={"Go Home"}>
         <div className="flexx">
           <span className="desc">Comming Soon</span>

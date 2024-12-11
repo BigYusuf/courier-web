@@ -8,11 +8,20 @@ import "../assets/css/grid.css";
 import "../assets/css/index.css";
 import Table from "../components/table/Table";
 import Badge from "../components/badge/Badge";
-import ProjectDataService from "../utils/firebaseUtils";
-import { getEvents, getEventsByNation } from "../redux/slice/events";
-import { getAllUsers } from "../redux/slice/auth";
 import { convertTimeStamp } from "../utils/others";
-import { getFeedbacks, getFeedbacksByNation } from "../redux/slice/feedbacks";
+import { setProfile } from "../redux/slice/auth/authSlice";
+import {
+  useGetProfileQuery,
+  useGetStaffProfileQuery,
+} from "../redux/slice/auth";
+import { useGetStaffsQuery, useGetUsersQuery } from "../redux/slice/user";
+import { useGetPackagesQuery } from "../redux/slice/packages";
+import { setMakeOrder } from "../redux/slice/orders/orderSlice";
+import { useGetContactsQuery } from "../redux/slice/contact";
+import {
+  useGetAdminOrdersQuery,
+  useGetOrdersQuery,
+} from "../redux/slice/orders";
 
 const chartOptions = {
   series: [
@@ -61,6 +70,9 @@ const chartOptions = {
 const topCustomers = {
   head: ["title", "Date Created"],
 };
+const contactHead = {
+  head: ["Name", "Date Created"],
+};
 
 const renderFeedbackHead = (item, index) => <th key={index}>{item}</th>;
 
@@ -74,27 +86,59 @@ const renderFeedbackBody = (item, index) => (
     <td>{convertTimeStamp(item?.createdAt)}</td>
   </tr>
 );
+const renderContactBody = (item, index) => (
+  <tr key={index}>
+    <td>
+      {item?.name?.length > 18
+        ? item?.name.substring(0, 18) + "..."
+        : item?.name}
+    </td>
+    <td>{convertTimeStamp(item?.createdAt)}</td>
+  </tr>
+);
 
 const latestOrders = {
-  head: ["user", " nation", "date", "status"],
+  head: ["Rec. Name", "Rec. country", "date", "status"],
+};
+const latestUsers = {
+  head: ["user", " country", "date", "status"],
 };
 
 const renderNewUserHead = (item, index) => <th key={index}>{item}</th>;
 
-const renderNewUserBody = (item, index) => (
+const renderLatestOrderBody = (item, index) => (
   <tr key={index}>
-    <td>{item?.lastName + " " + item?.firstName}</td>
-    <td>{item?.nation}</td>
+    <td>{item?.destName}</td>
+    <td>{item?.destCountry}</td>
     <td>{convertTimeStamp(item?.createdAt)}</td>
     <td>
       <Badge
         type={
-          item.isVerified === true || item.isVerified === "true"
+          item.status === true || item.status === "active"
             ? "success"
             : "primary"
         }
         content={
-          item.isVerified === true || item.isVerified === "true"
+          item.status === true || item.status === "active" ? "paid" : "not paid"
+        }
+      />
+    </td>
+  </tr>
+);
+const renderNewUserBody = (item, index) => (
+  <tr key={index}>
+    <td>{item?.lastName + " " + item?.firstName}</td>
+    <td>{item?.country}</td>
+    <td>{convertTimeStamp(item?.createdAt)}</td>
+    <td>
+      <Badge
+        type={
+          item.status === true || item.status === "active"
+            ? "success"
+            : "primary"
+        }
+        content={
+          item.status === true || item.isVerified === "active"
             ? "verified"
             : "unverified"
         }
@@ -105,94 +149,107 @@ const renderNewUserBody = (item, index) => (
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const themeReducer = useSelector((state) => state.theme.mode);
-  const managerProfile = useSelector((state) => state?.auth?.manager);
-
-  const allEvents = useSelector((state) => state.events.events);
-  const allUsers = useSelector((state) => state.auth.users);
-  const allFeedbacks = useSelector((state) => state.feedbacks.feedbacks);
-
-  const fetchEvents = async () => {
-    const docSnap = await ProjectDataService.getEventsByNation(
-      managerProfile?.nation
-    );
-    const docSnapAll = await ProjectDataService.getAllEvents();
-    if (managerProfile?.role === "manager") {
-      dispatch(
-        getEventsByNation(
-          docSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-        )
-      );
-    } else {
-      dispatch(
-        getEvents(docSnapAll.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-      );
+  const themeReducer = useSelector((state) => state?.theme?.mode);
+  const myProfile = useSelector((state) => state?.auth?.profile);
+  // const makeOrder = useSelector((state) => state?.order?.makeOrder);
+  const { data: customerData, isSuccess: customerSuccess } = useGetUsersQuery(
+    undefined,
+    {
+      skip: myProfile?.role === "user" ? true : false,
     }
-  };
-  const fetchUsers = async () => {
-    const docSnap = await ProjectDataService.getAllUsers();
-    let Users = docSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    if (managerProfile?.role === "manager") {
-      dispatch(
-        getAllUsers(Users.filter((x) => x.nation === managerProfile?.nation))
-      );
-    } else {
-      dispatch(getAllUsers(Users));
+  );
+  const { data: staffsData, isSuccess: staffSuccess } = useGetStaffsQuery(
+    undefined,
+    {
+      skip: myProfile?.role === "user" ? true : false,
     }
-  };
-
-  const fetchFeedbacks = async () => {
-    const docSnap = await ProjectDataService.getAllFeedback();
-    let Feedbacks = docSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    if (managerProfile?.role === "manager") {
-      dispatch(
-        getFeedbacksByNation(
-          Feedbacks.filter((x) => x.region === managerProfile?.nation)
-        )
-      );
-    } else {
-      dispatch(getFeedbacks(Feedbacks));
+  );
+  const { data: packagesData, isSuccess: packagesSuccess } =
+    useGetPackagesQuery();
+  // const { data: ordersData, isSuccess: staffSuccess } = useGetStaffsQuery();
+  const { data: orderData, isFetching: orderFetch } = useGetOrdersQuery(
+    undefined,
+    {
+      skip: myProfile?.role !== "user" ? true : false,
     }
-  };
+  );
+  const { data: orderAdminData, isFetching: orderAdminFetch } =
+    useGetAdminOrdersQuery(undefined, {
+      skip: myProfile?.role === "user" ? true : false,
+    });
+  // console.log("orderAdminData", orderAdminData);
   useEffect(() => {
-    fetchEvents();
+    if (myProfile?.role === "user") {
+      setMakeOrder(true);
+    }
   }, []);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-  useEffect(() => {
-    fetchFeedbacks();
-  }, []);
+  const { data: userData } = useGetProfileQuery(undefined, {
+    skip: myProfile?.role !== "user" ? true : false,
+  });
+  const { data: contactData, isSuccess: contactSuccess } = useGetContactsQuery(
+    undefined,
+    {
+      skip: myProfile?.role !== "user" ? true : false,
+    }
+  );
+  const { data: staffData } = useGetStaffProfileQuery(undefined, {
+    skip: myProfile?.role === "user" ? true : false,
+  });
 
-  const activeEvent = allEvents.filter((x) => x.status === "active");
-  const verifiedUser = allUsers.filter(
-    (x) => x.isVerified === true || x.isVerified === "true"
+  useEffect(() => {
+    if (!myProfile) {
+      if (userData?.success) {
+        dispatch(setProfile(userData?.user));
+      }
+      if (staffData?.success) {
+        dispatch(setProfile(staffData?.staff));
+      }
+    }
+  }, [dispatch, myProfile, staffData?.staff, staffData?.success, userData]);
+
+  const activeContact = contactData?.contacts?.filter(
+    (x) => x.status === "active"
   );
 
   const statsCard = [
     {
       icon: "bx bx-shopping-bag",
-      count: allEvents?.length,
-      title: "Total Events",
+      count:
+        myProfile?.role === "user"
+          ? orderData?.data?.length
+          : staffSuccess
+          ? staffsData?.staffs?.length
+          : 0, //contactSuccess ,
+      title: "Total Orders",
     },
     {
       icon: "bx bx-receipt",
-      count: activeEvent.length,
-      title: "Active events",
+      count: packagesSuccess ? packagesData?.packages?.length : 0,
+      title: myProfile?.role === "user" ? "Packages" : "Total Packages",
     },
     {
       icon: "bx bx-chart",
-      count: verifiedUser.length,
-      title: "Verified Users",
+      count:
+        myProfile?.role === "user"
+          ? contactData?.contacts?.length
+          : staffSuccess
+          ? staffsData?.staffs?.length
+          : 0, //contactSuccess
+      title: myProfile?.role === "user" ? "Total Contacts" : "Total Staffs",
     },
     {
       icon: "bx bx-user",
-      count: allUsers.length,
-      title: "Total Users",
+      count:
+        myProfile?.role === "user"
+          ? activeContact?.length
+          : customerSuccess
+          ? customerData?.data?.length
+          : 0, //contactSuccess
+      title: myProfile?.role === "user" ? "Active Contacts" : "Total Users",
     },
   ];
-  
+
   return (
     <div>
       <h2 className="page-header">Dashboard</h2>
@@ -233,44 +290,94 @@ const Dashboard = () => {
         <div className="coll-4">
           <div className="card">
             <div className="card__header">
-              <h3>Latest Order</h3>
+              <h3>
+                {myProfile?.role === "user" ? "Latest Contact" : "Latest Order"}
+              </h3>
             </div>
-            <div className="card__body">
-              {allFeedbacks.length <= 0 ? (
-                <div>No Order ... </div>
-              ) : (
-                <Table
-                  headData={topCustomers.head}
-                  renderHead={(item, index) => renderFeedbackHead(item, index)}
-                  bodyData={allFeedbacks}
-                  renderBody={(item, index) => renderFeedbackBody(item, index)}
-                />
-              )}
-            </div>
+            {myProfile?.role === "user" ? (
+              <div className="card__body">
+                {!contactSuccess ? (
+                  <div>No Contact ... </div>
+                ) : (
+                  <Table
+                    headData={contactHead?.head}
+                    renderHead={(item, index) =>
+                      renderFeedbackHead(item, index)
+                    }
+                    bodyData={contactData?.contacts?.slice(0, 5)}
+                    renderBody={(item, index) => renderContactBody(item, index)}
+                  />
+                )}
+              </div>
+            ) : (
+              <div className="card__body">
+                {[].length <= 0 ? (
+                  <div>No Order ... </div>
+                ) : (
+                  <Table
+                    headData={topCustomers.head}
+                    renderHead={(item, index) =>
+                      renderFeedbackHead(item, index)
+                    }
+                    bodyData={[]}
+                    renderBody={(item, index) =>
+                      renderFeedbackBody(item, index)
+                    }
+                  />
+                )}
+              </div>
+            )}
             <div className="card__footer">
-              <Link to="/feedbacks"> View All</Link>
+              <Link to={myProfile?.role === "user" ? "/contacts" : "/orders"}>
+                View All
+              </Link>
             </div>
           </div>
         </div>
         <div className="coll-8">
           <div className="card">
             <div className="card__header">
-              <h3>New users</h3>
+              <h3>
+                {myProfile?.role === "user" ? "Latest Orders" : "New users"}
+              </h3>
             </div>
-            <div className="card__body">
-              {allUsers.length <= 0 ? (
-                <>No User ... </>
-              ) : (
-                <Table
-                  headData={latestOrders.head}
-                  renderHead={(item, index) => renderNewUserHead(item, index)}
-                  bodyData={allUsers.slice(0, 5)}
-                  renderBody={(item, index) => renderNewUserBody(item, index)}
-                />
-              )}
-            </div>
+            {myProfile?.role === "user" ? (
+              <div className="card__body">
+                {orderFetch ? (
+                  <>Loading Please wait</>
+                ) : orderData?.data?.length <= 0 ? (
+                  <>No Orders ... </>
+                ) : (
+                  <Table
+                    headData={latestOrders.head}
+                    renderHead={(item, index) => renderNewUserHead(item, index)}
+                    bodyData={orderData?.data?.slice(0, 5)}
+                    renderBody={(item, index) =>
+                      renderLatestOrderBody(item, index)
+                    }
+                  />
+                )}
+              </div>
+            ) : (
+              <div className="card__body">
+                {!customerSuccess ? (
+                  <>Loading Please wait</>
+                ) : customerData?.data?.length <= 0 ? (
+                  <>No User ... </>
+                ) : (
+                  <Table
+                    headData={latestUsers.head}
+                    renderHead={(item, index) => renderNewUserHead(item, index)}
+                    bodyData={customerData?.data?.slice(0, 5)}
+                    renderBody={(item, index) => renderNewUserBody(item, index)}
+                  />
+                )}
+              </div>
+            )}
             <div className="card__footer">
-              <Link to="/users">View All</Link>
+              <Link to={myProfile?.role === "user" ? "/orders" : "/users"}>
+                View All
+              </Link>
             </div>
           </div>
         </div>

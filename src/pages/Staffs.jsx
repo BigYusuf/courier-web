@@ -1,39 +1,44 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CSVLink } from "react-csv";
+import { toast } from "react-toastify";
+import { Badge, LoadingBox, CompleteInput, ModalOptions } from "../components";
+import { useGetStaffsQuery } from "../redux/slice/user";
+import { useRegisterStaffMutation } from "../redux/slice/auth";
 
-import { fetchManagers } from "../utils/fetch";
-import { useDispatch, useSelector } from "react-redux";
-import { CompleteInput, ModalOptions } from "../components";
-
-const staffTableHead = [
+const customerTableHead = [
   "",
   "name",
+  "email",
   "role",
-  "feedbacks",
-  "events created",
-  "nation",
+  "country",
+  "status",
   "action",
 ];
 
 const Staffs = () => {
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const initialData = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    role: "",
+    country: "",
+    password: "",
+  };
+  const [formData, setFormData] = useState(initialData);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const managerProfile = useSelector((state) => state?.auth?.manager);
 
-  const allManagers = useSelector((state) => state?.auth?.managers);
-  const fetchManager = () => {
-    fetchManagers(dispatch, managerProfile);
-  };
+  const {
+    data: staffData,
+    isFetching: staffLoading,
+    refetch,
+  } = useGetStaffsQuery();
 
-  useEffect(() => {
-    setLoading(true);
-    fetchManager();
-    setLoading(false);
-  }, []);
+  const [registerStaff] = useRegisterStaffMutation();
+  // console.log(staffData?.data);
 
   const closeModal = () => {
     if (openModal) {
@@ -41,52 +46,112 @@ const Staffs = () => {
     }
   };
 
-  const handleLink = (item) => {
-    navigate(`/managers/${item?.id}`);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      if (formData?.firstName === "") {
+        toast.error("First Name is required");
+        setLoading(false);
+        return;
+      } else if (formData?.lastName === "") {
+        toast.error("Last Name is required");
+        setLoading(false);
+        return;
+      } else if (formData?.email === "") {
+        toast.error("Email is required");
+        setLoading(false);
+        return;
+      } else if (formData?.password === "") {
+        toast.error("Password is required");
+        setLoading(false);
+        return;
+      } else if (formData?.role === "") {
+        toast.error("Role is required");
+        setLoading(false);
+        return;
+      }
+
+      const regStaff = await registerStaff(formData).unwrap();
+
+      // console.log(regStaff);
+      if (regStaff?.success) {
+        toast.success("Staff added");
+      } else {
+        toast.error(regStaff?.error?.message);
+      }
+      refetch();
+      setLoading(false);
+      setFormData(initialData);
+      setOpenModal(!openModal);
+    } catch (error) {
+      toast.error(
+        error?.message ? error?.message : "Error occured, contact support"
+      );
+      setLoading(false);
+      setOpenModal(!openModal);
+    }
+  };
+  const handleCancel = () => {
+    setFormData(initialData);
+    setOpenModal(!openModal);
   };
   const renderHead = (item, index) => <th key={index}>{item}</th>;
 
   const renderBody = (item, index) => (
     <tr key={index}>
-      <td>{index + 1}</td>
-      <td>
-        <div className="pointer" onClick={() => handleLink(item)}>
-          {item?.name}
-        </div>
+      <td className="pointer">{index + 1}</td>
+      <td className="pointer" onClick={() => navigate(`/staffs/${item?.id}`)}>
+        {item?.lastName + " " + item?.firstName}
+      </td>
+      <td className="pointer" onClick={() => navigate(`/staffs/${item?.id}`)}>
+        {item?.email}
+      </td>
+      <td className="pointer" onClick={() => navigate(`/staffs/${item?.id}`)}>
+        {item?.role}
+      </td>
+
+      <td className="pointer" onClick={() => navigate(`/staffs/${item?.id}`)}>
+        {item?.country}
+      </td>
+      <td className="pointer" onClick={() => navigate(`/staffs/${item?.id}`)}>
+        <Badge
+          type={
+            item.status === true || item.status === "active"
+              ? "success"
+              : "warning"
+          }
+          content={
+            item.status === true || item.status === "active"
+              ? "active"
+              : "disabled"
+          }
+        />
       </td>
       <td>
-        <div className="pointer" onClick={() => handleLink(item)}>
-          {item?.role}
-        </div>
-      </td>
-      <td>{item?.feedbacksAdded}</td>
-      <td>{item?.eventsAdded}</td>
-      <td>
-        <div className="pointer" onClick={() => handleLink(item)}>
-          {item?.nation}
-        </div>
-      </td>
-      <td>
-        <button onClick={() => handleLink(item)} className="card__button">
+        <button
+          onClick={() => navigate(`/staffs/${item?.id}`)}
+          className="card__button "
+        >
           View
         </button>
       </td>
     </tr>
   );
 
-  const [newManager, setNewManager] = useState({});
-
-  let filteredItems = allManagers?.filter(
-    (item) =>
-      item?.name?.toLowerCase()?.includes(search?.toLowerCase()) ||
-      item?.nation?.toLowerCase()?.includes(search?.toLowerCase()) ||
-      item?.role?.toLowerCase()?.includes(search?.toLowerCase())
-  );
-
+  // let filteredItems = [];
+  let filteredItems = staffData?.staffs
+    ? staffData?.staffs?.filter(
+        (item) =>
+          item?.firstName?.toLowerCase()?.includes(search?.toLowerCase()) ||
+          item?.lastName?.toLowerCase()?.includes(search?.toLowerCase()) ||
+          item?.email?.toLowerCase()?.includes(search?.toLowerCase())
+      )
+    : [];
   const limit = "10";
   const initDataShow =
     limit && filteredItems
-      ? filteredItems.slice(0, Number(limit))
+      ? filteredItems?.slice(0, Number(limit))
       : filteredItems;
 
   const [dataShow, setDataShow] = useState(initDataShow);
@@ -96,8 +161,8 @@ const Staffs = () => {
   let range = [];
 
   if (limit !== undefined) {
-    let page = Math.floor(filteredItems.length / Number(limit));
-    pages = filteredItems.length % Number(limit) === 0 ? page : page + 1;
+    let page = Math.floor(filteredItems?.length / Number(limit));
+    pages = filteredItems?.length % Number(limit) === 0 ? page : page + 1;
     range = [...Array(pages).keys()];
   }
 
@@ -107,31 +172,40 @@ const Staffs = () => {
     const start = Number(limit) * page;
     const end = start + Number(limit);
 
-    setDataShow(filteredItems.slice(start, end));
+    setDataShow(filteredItems?.slice(start, end));
 
     setCurrPage(page);
   };
 
+  const handleInputStaffChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   return (
-    <div className="container" onClick={closeModal}>
+    <div className="containerr" onClick={closeModal}>
       <div className="page-top">
-        <h2 className="page-header-alt">staffs</h2>
+        <h2 className="page-header-alt">Staffs</h2>
 
         <div className="page-options">
           <div className="page-search">
             <input
+              type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              type="text"
               placeholder="Search here..."
             />
             <i className="bx bx-search"></i>
           </div>
-          <div className="page-filter">
+
+          {/* <div className="page-filter">
             <CSVLink data={filteredItems}>
               <i className="bx bx-filter"></i>
             </CSVLink>
-          </div>
+          </div> */}
           <div className="page-filter" onClick={() => setOpenModal(true)}>
             <i className="bx bx-plus"></i>
           </div>
@@ -139,46 +213,90 @@ const Staffs = () => {
       </div>
       <div className="table-search">
         <input
+          type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          type="text"
           placeholder="Search here..."
         />
         <i className="bx bx-search"></i>
       </div>
+
       {openModal && (
         <ModalOptions
-          handleCancel={() => setOpenModal(!openModal)}
-          title={"Create Manager"}
+          handleCancel={handleCancel}
+          title={"Create Staff/ Admin"}
           btnText={"Save"}
           cancel
-          handleOption={() => setOpenModal(!openModal)}
+          handleOption={handleSubmit}
         >
           <div className="flexx">
-            <span className="desc">Access to unlimited Possibilities</span>
-            {!newManager ? (
-              <>
-                <div className="row1">
-                  <div className="coll-6">
-                    <CompleteInput name="Name" title={"Name"} />
-                  </div>
-                  <div className="coll-6">
-                    <CompleteInput name="Region" title={"Region"} select />
-                  </div>
-                  <div className="coll-6">
-                    <CompleteInput name="Name" title={"Name"} />
-                  </div>
-                </div>
-
-                <span className="small">Region Cannot be changed</span>
-              </>
-            ) : (
-              <div className="managerList">
-                {allManagers.map((item) => (
-                  <div className="managerItem">{item.name}</div>
-                ))}
+            {/* <span className="desc">
+              Make {selectedUser?.firstName + " "} a staff
+            </span> */}
+            <div className="row1">
+              <div className="coll-6">
+                <CompleteInput
+                  name="firstName"
+                  title={"First Name"}
+                  cancel={""}
+                  type="text"
+                  value={formData?.firstName}
+                  dataLabel={formData?.firstName}
+                  onChange={handleInputStaffChange}
+                />
               </div>
-            )}
+              <div className="coll-6">
+                <CompleteInput
+                  name="lastName"
+                  title={"Last Name"}
+                  cancel={""}
+                  type="text"
+                  value={formData?.lastName}
+                  dataLabel={formData?.lastName}
+                  onChange={handleInputStaffChange}
+                />
+              </div>
+              <div className="coll-6">
+                <CompleteInput
+                  name="email"
+                  title={"Email"}
+                  cancel={""}
+                  type="text"
+                  value={formData?.email}
+                  dataLabel={formData?.email}
+                  onChange={handleInputStaffChange}
+                />
+              </div>
+              <div className="coll-6">
+                <CompleteInput
+                  name="password"
+                  title={"Password"}
+                  cancel={""}
+                  type="text"
+                  value={formData?.password}
+                  dataLabel={formData?.password}
+                  onChange={handleInputStaffChange}
+                />
+              </div>
+              <div className="coll-6">
+                <CompleteInput
+                  name="role"
+                  title={"New Role"}
+                  select
+                  data={[
+                    { id: 1, value: "admin", label: "Admin" },
+                    { id: 2, value: "staff", label: "Staff" },
+                  ]}
+                  dataLabel={formData?.role}
+                  cancel={""}
+                  value={formData?.role}
+                  type="text"
+                  onChange={handleInputStaffChange}
+                />
+              </div>
+            </div>
+
+            <span className="small">Welcome aboard</span>
           </div>
         </ModalOptions>
       )}
@@ -186,18 +304,20 @@ const Staffs = () => {
         <div className="coll-12">
           <div className="card">
             <div className="card__body">
-              {loading ? (
-                <div>Loading, Please Wait </div>
-              ) : allManagers.length <= 0 ? (
-                <div>No Staff </div>
+              {staffLoading ? (
+                <div>
+                  <LoadingBox circle={true} />
+                </div>
               ) : (
+                // ) : allUsers.length <= 0 ? (
+                //   <div>No Users</div>
                 <div>
                   <div className="table-wrapper">
                     <table>
-                      {staffTableHead && renderHead ? (
+                      {customerTableHead && renderHead ? (
                         <thead>
                           <tr>
-                            {staffTableHead.map((item, index) =>
+                            {customerTableHead.map((item, index) =>
                               renderHead(item, index)
                             )}
                           </tr>

@@ -184,6 +184,9 @@
 .signup .right .content .disclaimer span {
   text-decoration: underline;
   cursor: pointer;
+  text-align: right;
+display: flex;
+justify-content: flex-end;
 }
 .signup .right .content .disclaimer {
   line-height: 18px;

@@ -1,7 +1,7 @@
 /*@import '../../breakpoint';*/
 .modalOptions {
   position: absolute;
-  top: 80%;
+  /* top: 100%; */
   left: 50%;
   transform: translate(-50%, -50%);
   /*
@@ -10,6 +10,21 @@
   bottom: 0;
   right: 0;
   align-items: flex-start;*/
+  z-index: 100;
+}
+.modalOptions1 {
+  position: absolute;
+  /* top: 80%;
+  left: 50%; */
+  /* transform: translate(-50%, -50%); */
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  align-items: center;
   z-index: 100;
 }
 
@@ -148,7 +163,7 @@ input {
   background-color: var(--main-color) !important;
   display: flex;
   justify-content: center !important;
-  align-content: center !important;
+  align-items: center !important;
 }
 
 .modalFooterBtn2 {
@@ -157,13 +172,14 @@ input {
   background-color: var(--txt-color) !important;
   display: flex;
   justify-content: center !important;
-  align-content: center !important;
+  align-items: center !important;
 }
 
 @media screen and (max-width: 480px) {
   .modalContainer {
-    width: 100%;
-    min-width: 200px;
+    width: 100% !important;
+    min-width: 200px !important;
+    max-width: 280px;
   }
   .small,
   .desc {
@@ -171,6 +187,6 @@ input {
   }
   .modalFooterBtn1,
   .modalFooterBtn2 {
-    font-size: 16px;
+    font-size: 16px !important;
   }
 }
